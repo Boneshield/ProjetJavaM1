@@ -22,8 +22,8 @@ public class Carte {
 		return this.couleur;
 	}
 	
-	public void setValeur(Carte carte, int valeur) {
-		carte.valeur = valeur;
+	public void setValeur(int valeur) {
+		this.valeur = valeur;
 	}
 	
 	public String ToString() {

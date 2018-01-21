@@ -12,7 +12,9 @@ public class BClient {
 		carte = jeu.TireCarte();
 		System.out.println(carte.ToString());
 		carte = jeu.TireCarte();
+		System.out.println(carte.ToString());
 		
+		//affichage menu
 		while(true){
 			System.out.println("******* MENU *******");
 			System.out.println(carte.ToString());
@@ -23,20 +25,22 @@ public class BClient {
 				System.out.println("3. Changer la valeur de l'AS");
 			}
 			System.out.println("choix : ");
-		
+			
+			//lecture du choix du client
 			Scanner lecture;
 			lecture = new Scanner(System.in);
 			int choix = lecture.nextInt();
 		
 			switch(choix) {
 				case 1:
-					//hit
-				
+					//hit : demande une carte
+					System.out.println("Vous demandez une carte");
 				case 2:
-					//stand
-				
-				case 3: //carte.getNomCarte() == Figure.AS
-			
+					//stand : passe son tour
+					System.out.println("Vous decidez de vous arreter");
+				case 3:
+					//carte.getNomCarte() == Figure.AS
+					System.out.println("Vous changez la valeur de l'AS");
 				default:
 					System.out.println("Le choix doit être 1, 2 ou 3");
 			}

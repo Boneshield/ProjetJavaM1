@@ -10,8 +10,8 @@ public class Bserveur {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		BlackJack bl = new BlackJack();
-		
 		MainJoueurImpl bi;
+		
 		try {
 			bi = new MainJoueurImpl(bl);
 			try {
