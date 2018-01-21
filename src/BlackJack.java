@@ -67,6 +67,8 @@ public class BlackJack {
 	
 	public BlackJack() {
 		lesJoueurs = new HashMap<String, Joueur>();
+		Joueur croupier = null;
+		this.croupier = croupier;
 	}
 	
 	public void creerJoueur(String numJoueur, MainJoueur m) {
@@ -152,19 +154,35 @@ public class BlackJack {
 				
 			}
 			for(int i=0;i<lesJoueurs.size();i++) {
-				if(croupier.calculScore() < lesJoueurs.get(i).calculScore()) {
+				int scoreJoueur = lesJoueurs.get(i).calculScore();
+				if(croupier.calculScore() < scoreJoueur) {
 					//Joueur gagnant
 					
 				}
-				if(croupier.calculScore() > lesJoueurs.get(i).calculScore())
+				if(croupier.calculScore() > scoreJoueur)
 				{
 					//Joueur perdant
 					
 				}
-				if(croupier.calculScore() == lesJoueurs.get(i).calculScore()) {
+				if(croupier.calculScore() == scoreJoueur) {
 					//Egalité avec quatre cas
-					
-					
+						//Si les deux joueurs ont 21
+					if(croupier.calculScore() == 21 && scoreJoueur == 21) {
+						//Si 21 avec 2 cartes vs 21 3 cartes
+						if(croupier.main.size() == 3 && lesJoueurs.get(i).main.size() == 2) {
+							//Joueur gagnant
+							
+						}
+						//Si 21 avec 2 cartes vs 21 3 cartes
+						if(croupier.main.size() == 2 && lesJoueurs.get(i).main.size() == 3) {
+							//Joueur perdant
+							
+						}
+					}
+					else {
+						//Sinon egalite parfaite
+						
+					}
 				}
 			}
 		}
