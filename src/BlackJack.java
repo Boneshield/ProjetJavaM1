@@ -7,18 +7,13 @@ public class BlackJack {
 	
 	class Joueur {
 		private String numJoueur;
-		private MainJoueur m;
 		private ArrayList<Carte> main;
 		private boolean stand = false;
 		
-		public Joueur(String numJoueur, MainJoueur m) {
+		public Joueur(String numJoueur) {
 			this.numJoueur = numJoueur;
-			this.m = m;
 		}
 		
-		public String getNumJoueur() {
-			return this.numJoueur;
-		}
 		
 		public void afficheMain() {
 			System.out.println("Main du joueur");
@@ -51,7 +46,7 @@ public class BlackJack {
 				carte.setValeur(11);
 		}
 		
-		public boolean elimination() {
+		public boolean EstElimine() {
 			return (calculScore() > 21);
 		}
 		
@@ -71,8 +66,8 @@ public class BlackJack {
 		this.croupier = croupier;
 	}
 	
-	public void creerJoueur(String numJoueur, MainJoueur m) {
-		lesJoueurs.put(numJoueur, new Joueur(numJoueur, m));
+	public void creerJoueur(String numJoueur) {
+		lesJoueurs.put(numJoueur, new Joueur(numJoueur));
 	}
 	
 	//Distribution cartes par le croupier deux par personne 
@@ -101,7 +96,7 @@ public class BlackJack {
 		//Elimination du joueur si son score est supérieur à 21
 	public void elimination(String numJoueur) {
 		//Si le score du joueur dépasse 21 alors il est éliminé
-		if(lesJoueurs.get(numJoueur).elimination()) {
+		if(lesJoueurs.get(numJoueur).EstElimine()) {
 			lesJoueurs.remove(numJoueur);
 		}
 	}
@@ -165,23 +160,23 @@ public class BlackJack {
 					
 				}
 				if(croupier.calculScore() == scoreJoueur) {
-					//Egalité avec quatre cas
-						//Si les deux joueurs ont 21
-					if(croupier.calculScore() == 21 && scoreJoueur == 21) {
-						//Si 21 avec 2 cartes vs 21 3 cartes
-						if(croupier.main.size() == 3 && lesJoueurs.get(i).main.size() == 2) {
-							//Joueur gagnant
+					//Si le score est de 21 pour chacun
+					if(croupier.calculScore() == 21 && lesJoueurs.get(i).calculScore() == 21) {
+						//Egalité à 21 avec quatre cas
+					//Si 21 avec 3 cartes vs 21 avec 2 cartes
+					if(croupier.main.size() == 3 && lesJoueurs.get(i).main.size() == 2) {
+						//Joueur gagnant
 							
-						}
-						//Si 21 avec 2 cartes vs 21 3 cartes
-						if(croupier.main.size() == 2 && lesJoueurs.get(i).main.size() == 3) {
-							//Joueur perdant
+					}
+					//Si 21 avec 2 cartes vs 21 3 cartes
+					if(croupier.main.size() == 2 && lesJoueurs.get(i).main.size() == 3) {
+						//Joueur perdant
 							
-						}
 					}
 					else {
 						//Sinon egalite parfaite
 						
+					}
 					}
 				}
 			}
