@@ -9,16 +9,17 @@ public class BClient {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		try {
-			MainJoueur bl = (MainJoueur) Naming.lookup("rmi://localhost/BlackJack");
+			Serveur bl = (Serveur) Naming.lookup("rmi://localhost/BlackJack");
 			String numJoueur;
 			System.out.println("Veuillez entrer un nom de joueur :");
 			//lecture du choix du client
 			Scanner lecture;
 			lecture = new Scanner(System.in);
 			numJoueur = lecture.next();
-			Serveur srv = new ServeurImpl();
+			Client srv = new ClientImpl();
 			bl.connexion(numJoueur, srv);
 			System.out.println("Connecté au serveur");
+			
 			
 			//affichage menu
 			while(true){

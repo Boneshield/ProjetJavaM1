@@ -10,11 +10,17 @@ public class BlackJack {
 		private String numJoueur;
 		private ArrayList<Carte> main;
 		private boolean stand = false;
-		private Serveur srv;
+		private Client srv;
 		
-		public Joueur(String numJoueur, Serveur srv) {
+		//Joueur
+		public Joueur(String numJoueur, Client srv) {
 			this.numJoueur = numJoueur;
 			this.srv = srv;
+		}
+		
+		//Croupier
+		public Joueur() {
+			
 		}
 		
 		//Retourne le numéro du joueur courant
@@ -72,11 +78,11 @@ public class BlackJack {
 	
 	public BlackJack() {
 		lesJoueurs = new HashMap<String, Joueur>();
-		Joueur croupier = null;
+		Joueur croupier = new Joueur();
 		this.croupier = croupier;
 	}
 	
-	public void creerJoueur(String numJoueur, Serveur srv) {
+	public void creerJoueur(String numJoueur, Client srv) {
 		lesJoueurs.put(numJoueur, new Joueur(numJoueur, srv));
 	}
 	
@@ -93,7 +99,6 @@ public class BlackJack {
 		croupier.hit();
 	}
 	
-	//Tour des joueurs
 		//Hit : Demande de carte par un joueur
 	public void hit(String numJoueur) {
 		//Demande une carte pour un joueur si il n'a pas encore stand
@@ -130,7 +135,7 @@ public class BlackJack {
 		}
 	}
 	
-	//Arret de tout les joueur
+
 	//Tirage du croupier
 	public void tirageCroupier() {
 		//Vérification que tout les joueurs soit stand

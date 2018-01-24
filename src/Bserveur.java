@@ -9,11 +9,11 @@ public class Bserveur {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		MainJoueurImpl bi;
+		ServeurImpl bi;
 		BlackJack bl = new BlackJack();
 		
 		try {
-			bi = new MainJoueurImpl(bl);
+			bi = new ServeurImpl(bl);
 			try {
 				//Démarre le rmiregistry
 				LocateRegistry.createRegistry(1099);
@@ -28,7 +28,7 @@ public class Bserveur {
 			}
 			
 				try {
-					MainJoueur b = (MainJoueur) Naming.lookup("rmi://localhost/BlackJack");
+					Serveur b = (Serveur) Naming.lookup("rmi://localhost/BlackJack");
 					System.out.println("En attente de joueur");
 					//bl.attenteJoueur();
 					bl.distribuer();
