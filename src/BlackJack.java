@@ -1,3 +1,4 @@
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -9,20 +10,27 @@ public class BlackJack {
 		private String numJoueur;
 		private ArrayList<Carte> main;
 		private boolean stand = false;
+		private Serveur srv;
 		
-		public Joueur(String numJoueur) {
+		public Joueur(String numJoueur, Serveur srv) {
 			this.numJoueur = numJoueur;
+			this.srv = srv;
 		}
 		
+		//Retourne le numéro du joueur courant
+		public String getNumJoueur() {
+			return this.numJoueur;
+		}
 		
+		//Affiche les cartes de la main du joueur (sur le serveur)
 		public void afficheMain() {
-			System.out.println("Main du joueur");
-			for(int i=0;i<main.size();i++) {
-				System.out.println("carte "+i);
-				main.get(i).ToString();
+			System.out.println("Coucou");
+			for(int i=0;i<this.main.size();i++) {
+				System.out.println("carte "+" "+i+" "+this.main.get(i).ToString());
 			}
 		}
 		
+		//Calcule le score de la main du joueur
 		public int calculScore() {
 			int score = 0;
 			for(int i=0;i<main.size();i++) {
@@ -31,12 +39,14 @@ public class BlackJack {
 			return score;
 		}
 		
+		//hit tire une carte pour le joueur
 		public void hit() {
 			Carte carte;
 			carte = jeu.TireCarte();
 			main.add(carte);
 		}
 		
+		//Change la valeur 'une carte (marche seulement pour l'as)
 		public void changeAsValue(Carte carte) {
 			//si la valeur de l'as est de 11 alors elle passe à 1 sinon elle passe à 11
 			if(carte.getValeurCarte() == 11) {
@@ -46,16 +56,16 @@ public class BlackJack {
 				carte.setValeur(11);
 		}
 		
+		//Retourne vrai si un joueur possède un score supérieur à 21
 		public boolean EstElimine() {
 			return (calculScore() > 21);
 		}
 		
+		//Passe un joueur en stand
 		public void stand() {
 			this.stand = true;
 		}
-		
 	}
-	
 	
 	HashMap<String, Joueur> lesJoueurs;
 	Joueur croupier;
@@ -66,8 +76,8 @@ public class BlackJack {
 		this.croupier = croupier;
 	}
 	
-	public void creerJoueur(String numJoueur) {
-		lesJoueurs.put(numJoueur, new Joueur(numJoueur));
+	public void creerJoueur(String numJoueur, Serveur srv) {
+		lesJoueurs.put(numJoueur, new Joueur(numJoueur, srv));
 	}
 	
 	//Distribution cartes par le croupier deux par personne 
@@ -146,18 +156,18 @@ public class BlackJack {
 			//Quatre cas de figure
 			if(croupier.calculScore() > 21) {
 				//Tout les joueurs gagnent
-				
+				System.out.println("Tout les joueurs gagnent");
 			}
 			for(int i=0;i<lesJoueurs.size();i++) {
 				int scoreJoueur = lesJoueurs.get(i).calculScore();
 				if(croupier.calculScore() < scoreJoueur) {
 					//Joueur gagnant
-					
+					System.out.println("Le joueur a gagne");
 				}
 				if(croupier.calculScore() > scoreJoueur)
 				{
 					//Joueur perdant
-					
+					System.out.println("Le joueur a perdu");
 				}
 				if(croupier.calculScore() == scoreJoueur) {
 					//Si le score est de 21 pour chacun
@@ -166,21 +176,40 @@ public class BlackJack {
 					//Si 21 avec 3 cartes vs 21 avec 2 cartes
 					if(croupier.main.size() == 3 && lesJoueurs.get(i).main.size() == 2) {
 						//Joueur gagnant
-							
+						System.out.println("Le joueur a gagne avec un blackjack");
 					}
 					//Si 21 avec 2 cartes vs 21 3 cartes
 					if(croupier.main.size() == 2 && lesJoueurs.get(i).main.size() == 3) {
 						//Joueur perdant
-							
+						System.out.println("Le joueur a perdu avec un blackjack");
 					}
 					else {
 						//Sinon egalite parfaite
-						
+						System.out.println("Egalite");
 					}
 					}
 				}
 			}
 		}
 	}
-	
+
+	public void afficherMain(String numJoueur) {
+		// TODO Auto-generated method stub
+		lesJoueurs.get(numJoueur).afficheMain();
+	}
+
+	/*public void attenteJoueur() {
+		// TODO Auto-generated method stub
+			while(lesJoueurs.size() == 0) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				notify();
+			}
+		}*/
 }
+	
+

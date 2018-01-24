@@ -9,8 +9,8 @@ public class Bserveur {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		BlackJack bl = new BlackJack();
 		MainJoueurImpl bi;
+		BlackJack bl = new BlackJack();
 		
 		try {
 			bi = new MainJoueurImpl(bl);
@@ -28,7 +28,16 @@ public class Bserveur {
 			}
 			
 				try {
-					BlackJack b = (BlackJack) Naming.lookup("rmi://localhost/BlackJack");
+					MainJoueur b = (MainJoueur) Naming.lookup("rmi://localhost/BlackJack");
+					System.out.println("En attente de joueur");
+					//bl.attenteJoueur();
+					bl.distribuer();
+					/*for(int i=0;i<bl.lesJoueurs.size();i++) {
+						System.out.println("Tour du joueur "+i);
+						System.out.println("Joueur : "+bl.lesJoueurs.get(i).getNumJoueur());
+						bl.lesJoueurs.get(i).afficheMain();
+					}*/
+				
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
