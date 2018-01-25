@@ -1,5 +1,6 @@
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 public class ClientImpl extends UnicastRemoteObject implements Client {
 
@@ -9,11 +10,16 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 	}
 
 	@Override
-	public void afficherMain(String mainJoueur) throws RemoteException {
+	//Afficher la main du client au client
+	public void afficherMain(ArrayList<Carte> mainJoueur) throws RemoteException {
 		// TODO Auto-generated method stub
-		System.out.println(mainJoueur);
+		for(int i=0;i<mainJoueur.size();i++) {
+			System.out.println("carte "+i);
+			mainJoueur.get(i).ToString();
+		}
 	}
 	
+	//Afficher le score final au client
 	public void afficherScore(String scoreJoueur) throws RemoteException {
 		System.out.println(scoreJoueur);
 	}

@@ -2,6 +2,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 import java.util.Scanner;
 
 public class BClient {
@@ -12,14 +13,29 @@ public class BClient {
 			Serveur bl = (Serveur) Naming.lookup("rmi://localhost/BlackJack");
 			String numJoueur;
 			System.out.println("Veuillez entrer un nom de joueur :");
-			//lecture du choix du client
+			//lecture du nom/pseudo/numéro du client
 			Scanner lecture;
 			lecture = new Scanner(System.in);
 			numJoueur = lecture.next();
-			Client srv = new ClientImpl();
+			ClientImpl clt;
+			//Connexion du client
+			try {
+				clt = new ClientImpl();
+				//Déclaration auprès du serveur de noms
+				Naming.rebind("BlackJack", clt);
+				
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			String srv = "rmi://localhost/BlackJack";
 			bl.connexion(numJoueur, srv);
 			System.out.println("Connecté au serveur");
-			
+			System.out.println("Affichage Main");
 			
 			//affichage menu
 			while(true){

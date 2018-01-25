@@ -3,7 +3,7 @@ import java.rmi.RemoteException;
 public interface Serveur extends java.rmi.Remote {
 	
 	//Envoie le numéro du joueur au serveur
-	void connexion(String numJoueur, Client srv) throws RemoteException;
+	void connexion(String numJoueur, String srv) throws RemoteException;
 	
 	//Affiche la main du joueur
 	void afficherMain(String numJoueur) throws RemoteException;

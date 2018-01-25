@@ -135,7 +135,6 @@ public class BlackJack {
 		}
 	}
 	
-
 	//Tirage du croupier
 	public void tirageCroupier() {
 		//Vérification que tout les joueurs soit stand
