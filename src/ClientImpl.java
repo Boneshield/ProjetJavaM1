@@ -3,7 +3,9 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 public class ClientImpl extends UnicastRemoteObject implements Client {
-
+	
+	
+	
 	protected ClientImpl() throws RemoteException {
 		super();
 		// TODO Auto-generated constructor stub
@@ -11,12 +13,10 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 
 	@Override
 	//Afficher la main du client au client
-	public void afficherMain(ArrayList<Carte> mainJoueur) throws RemoteException {
+	public void afficherMainJoueur(String mainJoueur) throws RemoteException {
 		// TODO Auto-generated method stub
-		for(int i=0;i<mainJoueur.size();i++) {
-			System.out.println("carte "+i);
-			mainJoueur.get(i).ToString();
-		}
+		System.out.println(mainJoueur);
+		
 	}
 	
 	//Afficher le score final au client

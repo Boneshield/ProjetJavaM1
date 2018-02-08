@@ -16,11 +16,13 @@ public class BlackJack {
 		public Joueur(String numJoueur, Client srv) {
 			this.numJoueur = numJoueur;
 			this.srv = srv;
+			this.main = new ArrayList<Carte>();
+			this.srv = srv;
 		}
 		
 		//Croupier
 		public Joueur() {
-			
+			this.main = new ArrayList<Carte>();
 		}
 		
 		//Retourne le numéro du joueur courant
@@ -28,12 +30,18 @@ public class BlackJack {
 			return this.numJoueur;
 		}
 		
+		//Retourne la main du joueur
+		public ArrayList<Carte> getMain() {
+			return this.main;
+		}
+		
 		//Affiche les cartes de la main du joueur (sur le serveur)
-		public void afficheMain() {
-			System.out.println("Coucou");
+		public String afficheMain() {
+			String main = "Main :\n";
 			for(int i=0;i<this.main.size();i++) {
-				System.out.println("carte "+" "+i+" "+this.main.get(i).ToString());
+				main =(main+" "+i+" "+this.main.get(i).ToString()+"\n");
 			}
+			return main;
 		}
 		
 		//Calcule le score de la main du joueur
@@ -47,9 +55,15 @@ public class BlackJack {
 		
 		//hit tire une carte pour le joueur
 		public void hit() {
-			Carte carte;
-			carte = jeu.TireCarte();
-			main.add(carte);
+			Carte carte = jeu.TireCarte();
+			System.out.println("Ajout de la carte "+carte.ToString()+" dans la main du joueur "+this.numJoueur);
+			this.main.add(carte);
+			try {
+				srv.afficherMainJoueur(this.afficheMain());
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		//Change la valeur 'une carte (marche seulement pour l'as)
@@ -76,27 +90,33 @@ public class BlackJack {
 	HashMap<String, Joueur> lesJoueurs;
 	Joueur croupier;
 	
+	
 	public BlackJack() {
 		lesJoueurs = new HashMap<String, Joueur>();
 		Joueur croupier = new Joueur();
 		this.croupier = croupier;
+		this.jeu = new JeuDeCarte();
 	}
 	
 	public void creerJoueur(String numJoueur, Client srv) {
-		lesJoueurs.put(numJoueur, new Joueur(numJoueur, srv));
+		this.lesJoueurs.put(numJoueur, new Joueur(numJoueur, srv));
 	}
 	
 	//Distribution cartes par le croupier deux par personne 
 	public void distribuer() {
 		//tant que le un joueur n'a pas deux cartes, lui donner une carte
-		for(int i=0;i<lesJoueurs.size();i++) {
+		System.out.println("tirage des joueurs");
+		for(Joueur joueur : lesJoueurs.values()) {
 			do {
-				lesJoueurs.get(i).hit();
-			} while(lesJoueurs.get(i).main.size() == 2);
+				System.out.println("tirage du joueur "+joueur.getNumJoueur());
+				lesJoueurs.get(joueur.getNumJoueur()).hit();
+				System.out.println("taille de la main de lucas "+lesJoueurs.get(joueur.getNumJoueur()).main.size());
+			} while(lesJoueurs.get(joueur.getNumJoueur()).main.size() != 2);
 		}
+		System.out.println("tirage croupier");
 		//Tirage du croupier
-		croupier.hit();
-		croupier.hit();
+		this.croupier.hit();
+		this.croupier.hit();
 	}
 	
 		//Hit : Demande de carte par un joueur
@@ -138,8 +158,8 @@ public class BlackJack {
 	//Tirage du croupier
 	public void tirageCroupier() {
 		//Vérification que tout les joueurs soit stand
-		for(int i=0;i<lesJoueurs.size();i++) {
-			if(lesJoueurs.get(i).stand == false)
+		for(Joueur joueur : lesJoueurs.values()) {
+			if(lesJoueurs.get(joueur.getNumJoueur()).stand == false)
 			{
 				System.out.println("Un joueur n'est pas encore stand");
 			}
@@ -214,6 +234,28 @@ public class BlackJack {
 				notify();
 			}
 		}*/
+	
+	
+	/*public static void main(String args[]) {
+		BlackJack bl;
+		Client clt;
+		
+		try {
+			clt = new ClientImpl();
+			bl = new BlackJack();
+			bl.creerJoueur("lucas", clt);
+			System.out.println(bl.lesJoueurs.get("lucas").numJoueur);
+			
+			bl.distribuer();
+			bl.lesJoueurs.get("lucas").afficheMain();
+			
+			
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}*/
 }
 	
 

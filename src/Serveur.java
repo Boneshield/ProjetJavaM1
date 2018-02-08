@@ -1,12 +1,17 @@
 import java.rmi.RemoteException;
+import java.rmi.server.ObjID;
+import java.util.ArrayList;
 
 public interface Serveur extends java.rmi.Remote {
 	
 	//Envoie le numéro du joueur au serveur
-	void connexion(String numJoueur, String srv) throws RemoteException;
+	void connexion(String numJoueur, Client srv) throws RemoteException;
 	
 	//Affiche la main du joueur
 	void afficherMain(String numJoueur) throws RemoteException;
+	
+	//Demande la main du joueur au serveur pour l'afficher ensuite
+	ArrayList<Carte> returnMain(String numJoueur) throws RemoteException;
 	
 	//Demande au croupier de tirer une carte
 	void hit(String numJoueur) throws RemoteException;
@@ -15,5 +20,8 @@ public interface Serveur extends java.rmi.Remote {
 	void stand(String numJoueur) throws RemoteException;
 	
 	//Permet au client de changer la valeur de l'as (1 ou 11)
-	public void changeAsValue(String numJoueur) throws RemoteException;
+	void changeAsValue(String numJoueur) throws RemoteException;
+	
+	//Donne le nombre de joueurs
+	int listJoueur() throws RemoteException; 
 }

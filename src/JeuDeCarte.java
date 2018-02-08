@@ -34,5 +34,5 @@ public class JeuDeCarte {
 		int random = (int )(Math.random() * 51 + 1);
 		return this.jeu.get(random);
 	}
-		
+	
 }
