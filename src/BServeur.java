@@ -37,8 +37,7 @@ public class BServeur {
 					System.out.println("*****************");
 					System.out.println("attente de joueur");
 					
-					
-					
+					//Tests serveur ne pas prendre en compte
 					/*while(bi.bj.lesJoueurs.size() != 2) {
 						
 					}

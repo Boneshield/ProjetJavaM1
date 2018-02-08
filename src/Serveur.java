@@ -24,4 +24,7 @@ public interface Serveur extends java.rmi.Remote {
 	
 	//Donne le nombre de joueurs
 	int listJoueur() throws RemoteException; 
+	
+	//Donne le score final au joueur
+	int score(String numJoueur) throws RemoteException;
 }

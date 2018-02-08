@@ -39,6 +39,8 @@ public class ServeurImpl extends UnicastRemoteObject implements Serveur {
 			System.out.println("Connexion de "+srv);
 			this.bj.creerJoueur(numJoueur, srv);
 			System.out.println("Creation du joueur : "+numJoueur);
+			this.bj.hit(numJoueur);
+			this.bj.hit(numJoueur);
 	}
 
 	@Override
@@ -57,6 +59,10 @@ public class ServeurImpl extends UnicastRemoteObject implements Serveur {
 	public int listJoueur() throws RemoteException {
 		// TODO Auto-generated method stub
 		return this.bj.lesJoueurs.size();
+	}
+	
+	public int score(String numJoueur) throws RemoteException {
+		return this.bj.lesJoueurs.get(numJoueur).calculScore();
 	}
 	
 }

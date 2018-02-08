@@ -12,6 +12,7 @@ public class BClient {
 		try {
 			Serveur bl = (Serveur) Naming.lookup("rmi://localhost/BlackJack");
 			String numJoueur;
+			boolean stand = false;
 			System.out.println("Veuillez entrer un nom de joueur :");
 			//lecture du nom/pseudo/numéro du client
 			Scanner lecture;
@@ -26,6 +27,7 @@ public class BClient {
 			
 			//affichage menu
 			while(true){
+				if(!stand) {
 				System.out.println("******* MENU *******");
 				System.out.println("Que voulez vous faire ?");
 				System.out.println("1.Main (Afficher la main du joueur)");
@@ -48,11 +50,18 @@ public class BClient {
 						//hit : demande une carte
 						System.out.println("Vous demandez une carte");
 						bl.hit(numJoueur);
+						if(bl.score(numJoueur) > 21) {
+							System.out.println("Vous avez été éliminé");
+							System.exit(0);
+						}
 						break;
 					case 3:
-						//stand : passe son tour
+						//stand : passe son tour et attends le score
 						System.out.println("Vous decidez de vous arreter");
+						stand = true;
 						bl.stand(numJoueur);
+						System.out.println("Affichage du score :");
+						bl.score(numJoueur);
 						break;
 					case 4:
 						//carte.getNomCarte() == Figure.AS
@@ -66,6 +75,7 @@ public class BClient {
 						break;
 					default:
 						System.out.println("Le choix doit être 1, 2 ou 3");
+				}
 				}
 			}
 			

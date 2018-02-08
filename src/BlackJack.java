@@ -56,7 +56,7 @@ public class BlackJack {
 		//hit tire une carte pour le joueur
 		public void hit() {
 			Carte carte = jeu.TireCarte();
-			System.out.println("Ajout de la carte "+carte.ToString()+" dans la main du joueur "+this.numJoueur);
+			//System.out.println("Ajout de la carte "+carte.ToString()+" dans la main du joueur "+this.numJoueur);
 			this.main.add(carte);
 			try {
 				srv.afficherMainJoueur(this.afficheMain());
@@ -125,6 +125,7 @@ public class BlackJack {
 		if(lesJoueurs.get(numJoueur).stand == false)
 		{
 			lesJoueurs.get(numJoueur).hit();
+			this.elimination(numJoueur);
 		}
 	}
 	
@@ -132,6 +133,12 @@ public class BlackJack {
 	public void elimination(String numJoueur) {
 		//Si le score du joueur dépasse 21 alors il est éliminé
 		if(lesJoueurs.get(numJoueur).EstElimine()) {
+			try {
+				lesJoueurs.get(numJoueur).srv.afficherMainJoueur("Vous avez été éliminé");
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			lesJoueurs.remove(numJoueur);
 		}
 	}
@@ -181,35 +188,66 @@ public class BlackJack {
 			if(croupier.calculScore() > 21) {
 				//Tout les joueurs gagnent
 				System.out.println("Tout les joueurs gagnent");
+				
 			}
-			for(int i=0;i<lesJoueurs.size();i++) {
-				int scoreJoueur = lesJoueurs.get(i).calculScore();
+			for(Joueur joueur : lesJoueurs.values()) {
+				int scoreJoueur = lesJoueurs.get(joueur).calculScore();
 				if(croupier.calculScore() < scoreJoueur) {
 					//Joueur gagnant
 					System.out.println("Le joueur a gagne");
+					try {
+						joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+croupier.calculScore()+" pour le croupier");
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				if(croupier.calculScore() > scoreJoueur)
 				{
 					//Joueur perdant
 					System.out.println("Le joueur a perdu");
+					try {
+						joueur.srv.afficherScore("Vous avez perdu avec un score de "+scoreJoueur+" contre "+croupier.calculScore()+" pour le croupier");
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				if(croupier.calculScore() == scoreJoueur) {
 					//Si le score est de 21 pour chacun
-					if(croupier.calculScore() == 21 && lesJoueurs.get(i).calculScore() == 21) {
+					if(croupier.calculScore() == 21 && lesJoueurs.get(joueur).calculScore() == 21) {
 						//Egalité à 21 avec quatre cas
 					//Si 21 avec 3 cartes vs 21 avec 2 cartes
-					if(croupier.main.size() == 3 && lesJoueurs.get(i).main.size() == 2) {
+					if(croupier.main.size() == 3 && lesJoueurs.get(joueur).main.size() == 2) {
 						//Joueur gagnant
 						System.out.println("Le joueur a gagne avec un blackjack");
+						try {
+							joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+croupier.calculScore()+" pour le croupier, BlackJack pour vous");
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					//Si 21 avec 2 cartes vs 21 3 cartes
-					if(croupier.main.size() == 2 && lesJoueurs.get(i).main.size() == 3) {
+					if(croupier.main.size() == 2 && lesJoueurs.get(joueur).main.size() == 3) {
 						//Joueur perdant
 						System.out.println("Le joueur a perdu avec un blackjack");
+						try {
+							joueur.srv.afficherScore("Vous avez perdu avec un score de "+scoreJoueur+" contre "+croupier.calculScore()+" pour le croupier, BlackJack pour la banque");
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					else {
 						//Sinon egalite parfaite
 						System.out.println("Egalite");
+						try {
+							joueur.srv.afficherScore("Vous avez un score de "+scoreJoueur+" contre "+croupier.calculScore()+" pour le croupier, Egalite parfaite");
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					}
 				}
@@ -219,7 +257,12 @@ public class BlackJack {
 
 	public void afficherMain(String numJoueur) {
 		// TODO Auto-generated method stub
-		lesJoueurs.get(numJoueur).afficheMain();
+		try {
+			lesJoueurs.get(numJoueur).srv.afficherMainJoueur(numJoueur);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/*public void attenteJoueur() {
