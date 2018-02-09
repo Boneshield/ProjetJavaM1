@@ -1,4 +1,8 @@
-//Classe qui servira pour la version 2 on verra ça après
+/**
+ * Classe permettant l'isolement du croupier du casino
+ * @author mathieu
+ *
+ */
 public class Croupier {
 
 }

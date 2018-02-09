@@ -5,8 +5,19 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.util.Scanner;
 
+/**
+ * Main du client
+ * @author mathieu
+ *
+ */
 public class BClient {
 
+	/**
+	 * Main du client
+	 * Connexion au serveur et creation de l'interface pour le serveur
+	 * Affichage du menu
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		try {
@@ -61,15 +72,15 @@ public class BClient {
 						stand = true;
 						bl.stand(numJoueur);
 						System.out.println("Affichage du score :");
-						bl.score(numJoueur);
-						break;
+						System.out.println(bl.score(numJoueur));
+						System.exit(0);
 					case 4:
 						//carte.getNomCarte() == Figure.AS
 						System.out.println("Vous changez la valeur de l'AS");
 						bl.changeAsValue(numJoueur);
 						break;
 					case 5:
-						//carte.getNomCarte() == Figure.AS
+						//Affiche le nombre de joueur sur la table de jeu
 						System.out.println("Liste des joueurs présent");
 						System.out.println("Il y a "+bl.listJoueur()+" joueurs");
 						break;

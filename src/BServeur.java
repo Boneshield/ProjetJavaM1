@@ -6,10 +6,20 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
 
+/**
+ * Main du serveur avec gestion de RMI
+ * @author mathieu
+ *
+ */
 
 public class BServeur {
 
-	
+	/**
+	 * Main du serveur
+	 * Creation de l'interface pour le client et creation du registre de nom pour rmi
+	 * @param args
+	 * 		Argument passe au main 
+	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ServeurImpl bi;
