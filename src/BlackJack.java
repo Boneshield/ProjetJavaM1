@@ -77,8 +77,8 @@ public class BlackJack {
 		 */
 		public int calculScore() {
 			int score = 0;
-			for(int i=0;i<main.size();i++) {
-				score = score + main.get(i).getValeurCarte();
+			for(int i=0;i<this.main.size();i++) {
+				score = score + this.main.get(i).getValeurCarte();
 			}
 			return score;
 		}
@@ -186,7 +186,6 @@ public class BlackJack {
 		if(lesJoueurs.get(numJoueur).stand == false)
 		{
 			lesJoueurs.get(numJoueur).hit();
-			this.elimination(numJoueur);
 		}
 	}
 	
@@ -347,7 +346,7 @@ public class BlackJack {
 	public void afficherMain(String numJoueur) {
 		// TODO Auto-generated method stub
 		try {
-			lesJoueurs.get(numJoueur).srv.afficherMainJoueur(numJoueur);
+			lesJoueurs.get(numJoueur).srv.afficherMainJoueur(numJoueur+" "+lesJoueurs.get(numJoueur).afficheMain());
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

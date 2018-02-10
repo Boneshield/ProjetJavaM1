@@ -69,6 +69,7 @@ public class ServeurImpl extends UnicastRemoteObject implements Serveur {
 	public void stand(String numJoueur) throws RemoteException {
 		// TODO Auto-generated method stub
 		this.bj.stand(numJoueur);
+		this.bj.elimination(numJoueur);
 	}
 
 	/**

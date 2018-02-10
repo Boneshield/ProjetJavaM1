@@ -35,17 +35,20 @@ public class BClient {
 			bl.connexion(numJoueur, srv);
 			System.out.println("Connecté au serveur");
 			System.out.println("Vous etes le joueur "+numJoueur);
+			System.out.println("Affichage du score :");
+			System.out.println(bl.score(numJoueur));
 			
 			//affichage menu
 			while(true){
 				if(!stand) {
 				System.out.println("******* MENU *******");
+				System.out.println("Il y a "+bl.listJoueur()+" joueurs");
+				System.out.println(" ");
 				System.out.println("Que voulez vous faire ?");
 				System.out.println("1.Main (Afficher la main du joueur)");
 				System.out.println("2.Hit (Tirer une carte)");
 				System.out.println("3. Stand (Arreter de miser)");
 				System.out.println("4. Changer la valeur de l'AS");
-				System.out.println("5. Afficher le nombre de joueurs");
 				System.out.println("choix : ");
 				
 				//lecture du choix du client
@@ -56,11 +59,15 @@ public class BClient {
 						//Main
 						System.out.println("Voici votre main");
 						bl.afficherMain(numJoueur);
+						System.out.println("Affichage du score :");
+						System.out.println(bl.score(numJoueur));
 						break;
 					case 2:
 						//hit : demande une carte
 						System.out.println("Vous demandez une carte");
 						bl.hit(numJoueur);
+						System.out.println("Affichage du score :");
+						System.out.println(bl.score(numJoueur));
 						if(bl.score(numJoueur) > 21) {
 							System.out.println("Vous avez été éliminé");
 							System.exit(0);
@@ -71,18 +78,11 @@ public class BClient {
 						System.out.println("Vous decidez de vous arreter");
 						stand = true;
 						bl.stand(numJoueur);
-						System.out.println("Affichage du score :");
-						System.out.println(bl.score(numJoueur));
 						System.exit(0);
 					case 4:
 						//carte.getNomCarte() == Figure.AS
 						System.out.println("Vous changez la valeur de l'AS");
 						bl.changeAsValue(numJoueur);
-						break;
-					case 5:
-						//Affiche le nombre de joueur sur la table de jeu
-						System.out.println("Liste des joueurs présent");
-						System.out.println("Il y a "+bl.listJoueur()+" joueurs");
 						break;
 					default:
 						System.out.println("Le choix doit être 1, 2 ou 3");
