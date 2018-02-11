@@ -70,6 +70,7 @@ public class BClient {
 						System.out.println(bl.score(numJoueur));
 						if(bl.score(numJoueur) > 21) {
 							System.out.println("Vous avez été éliminé");
+							bl.hit(numJoueur);
 							System.exit(0);
 						}
 						break;

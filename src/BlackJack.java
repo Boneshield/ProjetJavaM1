@@ -199,11 +199,12 @@ public class BlackJack {
 		//Si le score du joueur dépasse 21 alors il est éliminé
 		if(lesJoueurs.get(numJoueur).EstElimine()) {
 			try {
-				lesJoueurs.get(numJoueur).srv.afficherMainJoueur("Vous avez été éliminé");
+				lesJoueurs.get(numJoueur).srv.afficherMainJoueur("Vous avez été éliminé...vous quittez la table");
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			System.out.println("Joueur "+numJoueur+" a ete elimine");
 			lesJoueurs.remove(numJoueur);
 		}
 	}
@@ -244,20 +245,22 @@ public class BlackJack {
 	 * Si son score est de 16 ou moins il tire une carte sinon il stand
 	 */
 	public void tirageCroupier() {
+		
 		//Vérification que tous les joueurs soit stand
-		for(Joueur joueur : lesJoueurs.values()) {
+		/*for(Joueur joueur : lesJoueurs.values()) {
 			if(lesJoueurs.get(joueur.getNumJoueur()).stand == false)
 			{
 				System.out.println("Un joueur n'est pas encore stand : "+joueur.getNumJoueur());
 			}
-		}
+		}*/
 		//Tirage de carte du croupier
-		while(croupier.calculScore() < 17) {
-			if(croupier.calculScore() <= 16) {
-				croupier.hit();
+		while(this.croupier.calculScore() < 17) {
+			if(this.croupier.calculScore() <= 16) {
+				Carte carte = jeu.TireCarte();
+				this.croupier.main.add(carte);
 			}
 		}
-		croupier.stand();
+		this.croupier.stand();
 	}	
 	
 	/**
@@ -266,76 +269,84 @@ public class BlackJack {
 	 */
 	public void calculGain() {
 		//Compare les scores joueur/banque
-		if(croupier.stand == true) {
+		if(this.croupier.stand == true) {
 			//Quatre cas de figure
-			if(croupier.calculScore() > 21) {
-				//Tout les joueurs gagnent
-				System.out.println("Tout les joueurs gagnent");
-				
-			}
-			for(Joueur joueur : lesJoueurs.values()) {
-				int scoreJoueur = lesJoueurs.get(joueur).calculScore();
-				if(croupier.calculScore() < scoreJoueur) {
-					//Joueur gagnant
-					System.out.println("Le joueur a gagne");
-					try {
-						joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+croupier.calculScore()+" pour le croupier");
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+				for(Joueur joueur : lesJoueurs.values()) {
+					int scoreJoueur = lesJoueurs.get(joueur.getNumJoueur()).calculScore();
+					//croupier perdant
+					if(this.croupier.calculScore() > 21) {
+						//Tout les joueurs gagnent
+						System.out.println("Tout les joueurs gagnent");
+						try {
+							joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier");
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
-				}
-				if(croupier.calculScore() > scoreJoueur)
-				{
-					//Joueur perdant
-					System.out.println("Le joueur a perdu");
-					try {
-						joueur.srv.afficherScore("Vous avez perdu avec un score de "+scoreJoueur+" contre "+croupier.calculScore()+" pour le croupier");
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				if(croupier.calculScore() == scoreJoueur) {
-					//Si le score est de 21 pour chacun
-					if(croupier.calculScore() == 21 && lesJoueurs.get(joueur).calculScore() == 21) {
-						//Egalité à 21 avec quatre cas
-					//Si 21 avec 3 cartes vs 21 avec 2 cartes
-					if(croupier.main.size() == 3 && lesJoueurs.get(joueur).main.size() == 2) {
+
+					if(this.croupier.calculScore() < scoreJoueur) {
 						//Joueur gagnant
-						System.out.println("Le joueur a gagne avec un blackjack");
+						System.out.println("Le joueur "+joueur.getNumJoueur()+"a gagne");
 						try {
-							joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+croupier.calculScore()+" pour le croupier, BlackJack pour vous");
+							joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier");
 						} catch (RemoteException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
-					//Si 21 avec 2 cartes vs 21 3 cartes
-					if(croupier.main.size() == 2 && lesJoueurs.get(joueur).main.size() == 3) {
+
+					if(this.croupier.calculScore() > scoreJoueur && this.croupier.calculScore() <= 21)
+					{
 						//Joueur perdant
-						System.out.println("Le joueur a perdu avec un blackjack");
+						System.out.println("Le joueur "+joueur.getNumJoueur()+" a perdu");
 						try {
-							joueur.srv.afficherScore("Vous avez perdu avec un score de "+scoreJoueur+" contre "+croupier.calculScore()+" pour le croupier, BlackJack pour la banque");
+							joueur.srv.afficherScore("Vous avez perdu avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier");
 						} catch (RemoteException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
-					else {
-						//Sinon egalite parfaite
-						System.out.println("Egalite");
-						try {
-							joueur.srv.afficherScore("Vous avez un score de "+scoreJoueur+" contre "+croupier.calculScore()+" pour le croupier, Egalite parfaite");
-						} catch (RemoteException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+					if(this.croupier.calculScore() == scoreJoueur) {
+						//Si le score est de 21 pour chacun
+						if(this.croupier.calculScore() == 21 && scoreJoueur == 21) {
+							//Egalité à 21 avec quatre cas
+							//Si 21 avec 3 cartes vs 21 avec 2 cartes
+							if(this.croupier.main.size() == 3 && lesJoueurs.get(joueur.getNumJoueur()).main.size() == 2) {
+								//Joueur gagnant
+								System.out.println("Le joueur "+joueur.getNumJoueur()+"a gagne avec un blackjack");
+								try {
+									joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier, BlackJack pour vous");
+								} catch (RemoteException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+							//Si 21 avec 2 cartes vs 21 3 cartes
+							if(this.croupier.main.size() == 2 && lesJoueurs.get(joueur.getNumJoueur()).main.size() == 3) {
+								//Joueur perdant
+								System.out.println("Le joueur "+joueur.getNumJoueur()+"a perdu avec un blackjack");
+								try {
+									joueur.srv.afficherScore("Vous avez perdu avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier, BlackJack pour la banque");
+								} catch (RemoteException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+							else {
+								//Sinon egalite parfaite
+								System.out.println("Egalite");
+								try {
+									joueur.srv.afficherScore("Vous avez un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier, Egalite parfaite");
+								} catch (RemoteException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
 						}
-					}
 					}
 				}
 			}
-		}
 	}
 
 	/**
