@@ -125,7 +125,6 @@ public class BlackJack {
 	 * Si son score est de 16 ou moins il tire une carte sinon il stand
 	 */
 	public void tirageCroupier() {
-		
 		//Vérification que tous les joueurs soit stand
 		/*for(Joueur joueur : lesJoueurs.values()) {
 			if(lesJoueurs.get(joueur.getNumJoueur()).stand == false)
@@ -256,48 +255,24 @@ public class BlackJack {
 	public void afficherMain(String numJoueur) {
 		// TODO Auto-generated method stub
 		try {
-			lesJoueurs.get(numJoueur).srv.afficherMainJoueur(numJoueur+" "+lesJoueurs.get(numJoueur).afficheMain());
+			this.lesJoueurs.get(numJoueur).srv.afficherMainJoueur(numJoueur+" "+lesJoueurs.get(numJoueur).afficheMain());
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	/*public void attenteJoueur() {
-		// TODO Auto-generated method stub
-			while(lesJoueurs.size() == 0) {
-				try {
-					wait();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				notify();
-			}
-		}*/
-	
-	
-	/*public static void main(String args[]) {
-		BlackJack bl;
-		Client clt;
-		
-		try {
-			clt = new ClientImpl();
-			bl = new BlackJack();
-			//mon joueur test s'appelle lucas, cela ne veut en aucun cas dire que j'ai pris/copié le code de lucas, n'est-ce pas ?
-			bl.creerJoueur("lucas", clt);
-			System.out.println(bl.lesJoueurs.get("lucas").numJoueur);
-			
-			bl.distribuer();
-			bl.lesJoueurs.get("lucas").afficheMain();
-			
-			
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	/**
+	 * Affiche la liste des joueurs
+	 * @return Chaine de caratere faisant la liste des joueurs
+	 */
+	public String listJoueur() {
+		String listJoueur = "Joueur :\n";
+		for(Joueur joueur : this.lesJoueurs.values()) {
+			listJoueur = (listJoueur+" "+joueur+" "+joueur.getNumJoueur()+"\n");
 		}
-		
-	}*/
+		return listJoueur; 
+	}
 }
 	
 
