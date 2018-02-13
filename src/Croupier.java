@@ -3,6 +3,6 @@
  * @author mathieu
  *
  */
-public class Croupier {
-
+public class Croupier extends Joueur {
+	
 }

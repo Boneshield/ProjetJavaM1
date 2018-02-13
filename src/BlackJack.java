@@ -10,129 +10,8 @@ import java.util.HashMap;
 public class BlackJack {
 	
 	private JeuDeCarte jeu;
-	
-	/**
-	 * Classe qui defini un joueur par son nom, sa main qui est une liste de carte, son etat stand et son interface pour le serveur
-	 * @author mathieu
-	 *
-	 */
-	class Joueur {
-		private String numJoueur;
-		private ArrayList<Carte> main;
-		private boolean stand = false;
-		private Client srv;
-		
-		/**
-		 * Constructeur joueur classique
-		 * @param numJoueur
-		 * 		Nom du joueur
-		 * @param srv
-		 * 		Interface pour que le serveur communique avec le joueur
-		 */
-		public Joueur(String numJoueur, Client srv) {
-			this.numJoueur = numJoueur;
-			this.srv = srv;
-			this.main = new ArrayList<Carte>();
-			this.srv = srv;
-		}
-		
-		/**
-		 * Constructeur joueur croupier
-		 */
-		public Joueur() {
-			this.main = new ArrayList<Carte>();
-		}
-		
-		/**
-		 * Retourne le numero du joueur courant
-		 * @return Une chaine de caractere qui correpond à son nom/numero
-		 */
-		public String getNumJoueur() {
-			return this.numJoueur;
-		}
-		
-		/**
-		 * Retourne la main du joueur
-		 * @return Une liste de carte qui correspond à la main du joueur
-		 */
-		public ArrayList<Carte> getMain() {
-			return this.main;
-		}
-		
-		/**
-		 * Construit les cartes de la main du joueur (sur le serveur) en chaine de caractere
-		 * @return une chaine de caractere qui est une liste des cartes du joueur
-		 */
-		public String afficheMain() {
-			String main = "Main :\n";
-			for(int i=0;i<this.main.size();i++) {
-				main = (main+" "+i+" "+this.main.get(i).ToString()+"\n");
-			}
-			return main;
-		}
-		
-		/**
-		 * Calcule le score de la main du joueur
-		 * @return Le score de la somme des valeurs des cartes de la main du joueur
-		 */
-		public int calculScore() {
-			int score = 0;
-			for(int i=0;i<this.main.size();i++) {
-				score = score + this.main.get(i).getValeurCarte();
-			}
-			return score;
-		}
-		
-		/**
-		 * Hit : tire une carte pour ce joueur depuis le jeu de carte
-		 * Affiche la nouvelle main au joueur
-		 * @see JeuDeCarte
-		 */
-		public void hit() {
-			Carte carte = jeu.TireCarte();
-			this.main.add(carte);
-			try {
-				srv.afficherMainJoueur(this.afficheMain());
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		/**
-		 * Change la valeur de la carte passee en parametre(marche seulement pour l'AS)
-		 * Met la valeur a 1 si elle est a 11 et inversement
-		 * @param carte
-		 * 		la carte doit etre un AS pour pouvoir etre change
-		 */
-		public void changeAsValue(Carte carte) {
-			//si la valeur de l'as est de 11 alors elle passe à 1 sinon elle passe à 11
-			if(carte.getValeurCarte() == 11) {
-				carte.setValeur(1);
-			}
-			else
-				carte.setValeur(11);
-		}
-		
-		/**
-		 * Retourne vrai si ce joueur possède un score supérieur à 21
-		 * @return un boolean selon le score du joueur
-		 * @see calculScore()
-		 */
-		public boolean EstElimine() {
-			return (calculScore() > 21);
-		}
-		
-		/**
-		 * Passe ce joueur en stand
-		 */
-		public void stand() {
-			this.stand = true;
-		}
-	}
-	
 	HashMap<String, Joueur> lesJoueurs;
-	Joueur croupier;
+	private Joueur croupier;
 	
 	/**
 	 * Constructeur
@@ -167,15 +46,16 @@ public class BlackJack {
 		for(Joueur joueur : lesJoueurs.values()) {
 			do {
 				System.out.println("tirage du joueur "+joueur.getNumJoueur());
-				lesJoueurs.get(joueur.getNumJoueur()).hit();
-				System.out.println("taille de la main de "+lesJoueurs.get(joueur.getNumJoueur()).main.size());
-			} while(lesJoueurs.get(joueur.getNumJoueur()).main.size() != 2);
+				lesJoueurs.get(joueur.getNumJoueur()).hit(jeu);
+				System.out.println("taille de la main de "+lesJoueurs.get(joueur.getNumJoueur()).getMain().size());
+			} while(lesJoueurs.get(joueur.getNumJoueur()).getMain().size() != 2);
 		}
 		System.out.println("tirage croupier");
 		//Tirage du croupier
-		this.croupier.hit();
-		this.croupier.hit();
+		this.croupier.hit(jeu);
+		this.croupier.hit(jeu);
 	}
+	
 	/**
 	 * Hit : Demande de carte par un joueur
 	 * @param numJoueur
@@ -183,9 +63,9 @@ public class BlackJack {
 	 */
 	public void hit(String numJoueur) {
 		//Demande une carte pour un joueur si il n'a pas encore stand
-		if(lesJoueurs.get(numJoueur).stand == false)
+		if(lesJoueurs.get(numJoueur).isStand() == false)
 		{
-			lesJoueurs.get(numJoueur).hit();
+			lesJoueurs.get(numJoueur).hit(jeu);
 		}
 	}
 	
@@ -216,7 +96,7 @@ public class BlackJack {
 	 */
 	public void stand(String numJoueur) {
 		//Un joueur s'arrete (ne demande plus de carte)
-		if(lesJoueurs.get(numJoueur).stand == false)
+		if(lesJoueurs.get(numJoueur).isStand() == false)
 		{
 			lesJoueurs.get(numJoueur).stand();
 			this.tirageCroupier();
@@ -231,10 +111,10 @@ public class BlackJack {
 	 */
 	public void changeAsValue(String numJoueur) {
 		//On parcours les cartes du joueur
-		for(int i=0;i<lesJoueurs.get(numJoueur).main.size();i++) {
+		for(int i=0;i<lesJoueurs.get(numJoueur).getMain().size();i++) {
 			//Si il y a un as, on peut changer sa valeur
-			if(lesJoueurs.get(numJoueur).main.get(i).getNomCarte() == Figure.AS) {
-				lesJoueurs.get(numJoueur).changeAsValue(lesJoueurs.get(numJoueur).main.get(i));
+			if(lesJoueurs.get(numJoueur).getMain().get(i).getNomCarte() == Figure.AS) {
+				lesJoueurs.get(numJoueur).changeAsValue(lesJoueurs.get(numJoueur).getMain().get(i));
 			}
 		}
 	}
@@ -257,7 +137,7 @@ public class BlackJack {
 		while(this.croupier.calculScore() < 17) {
 			if(this.croupier.calculScore() <= 16) {
 				Carte carte = jeu.TireCarte();
-				this.croupier.main.add(carte);
+				this.croupier.getMain().add(carte);
 			}
 		}
 		this.croupier.stand();
@@ -269,7 +149,7 @@ public class BlackJack {
 	 */
 	public void calculGain() {
 		//Compare les scores joueur/banque
-		if(this.croupier.stand == true) {
+		if(this.croupier.isStand() == true) {
 			//Quatre cas de figure
 				for(Joueur joueur : lesJoueurs.values()) {
 					int scoreJoueur = lesJoueurs.get(joueur.getNumJoueur()).calculScore();
@@ -312,7 +192,7 @@ public class BlackJack {
 						if(this.croupier.calculScore() == 21 && scoreJoueur == 21) {
 							//Egalité à 21 avec quatre cas
 							//Si 21 avec 3 cartes vs 21 avec 2 cartes
-							if(this.croupier.main.size() == 3 && lesJoueurs.get(joueur.getNumJoueur()).main.size() == 2) {
+							if(this.croupier.getMain().size() == 3 && lesJoueurs.get(joueur.getNumJoueur()).getMain().size() == 2) {
 								//Joueur gagnant
 								System.out.println("Le joueur "+joueur.getNumJoueur()+"a gagne avec un blackjack");
 								try {
@@ -323,7 +203,7 @@ public class BlackJack {
 								}
 							}
 							//Si 21 avec 2 cartes vs 21 3 cartes
-							if(this.croupier.main.size() == 2 && lesJoueurs.get(joueur.getNumJoueur()).main.size() == 3) {
+							if(this.croupier.getMain().size() == 2 && lesJoueurs.get(joueur.getNumJoueur()).getMain().size() == 3) {
 								//Joueur perdant
 								System.out.println("Le joueur "+joueur.getNumJoueur()+"a perdu avec un blackjack");
 								try {
@@ -349,6 +229,25 @@ public class BlackJack {
 			}
 	}
 
+	/**
+	 * Recommence une partie sur avec les joueurs actuellement connectés
+	 */
+	public void recommencerPartie() {
+		//Réinitialiser tout les joueurs
+		for(Joueur joueur : lesJoueurs.values()) {
+			//Vider les mains de tout les joueurs
+			joueur.viderMain();
+			//Repasser le stand des joueurs à false
+			joueur.setStand(false);
+		}
+		//Réinitialiser le croupier
+			//Vider sa main
+			this.croupier.viderMain();
+			//Repasser son stand à false
+			this.croupier.setStand(false);
+	}
+	
+	
 	/**
 	 * Affiche la main du joueur
 	 * @param numJoueur
