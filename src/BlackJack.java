@@ -11,7 +11,7 @@ public class BlackJack {
 	
 	private JeuDeCarte jeu;
 	HashMap<String, Joueur> lesJoueurs;
-	private Joueur croupier;
+	private Croupier croupier;
 	
 	/**
 	 * Constructeur
@@ -20,7 +20,7 @@ public class BlackJack {
 	 */
 	public BlackJack() {
 		lesJoueurs = new HashMap<String, Joueur>();
-		Joueur croupier = new Joueur();
+		Croupier croupier = new Croupier();
 		this.croupier = croupier;
 		this.jeu = new JeuDeCarte();
 	}

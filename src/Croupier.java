@@ -1,20 +1,17 @@
 import java.util.ArrayList;
 
 /**
- * Classe permettant l'isolement du croupier du casino
+ * Classe definissant un croupier du casino
  * @author mathieu
  *
  */
-public class Croupier extends Joueur {
-	
-	private ArrayList<Carte> main;
-	private boolean stand = false;
+public class Croupier extends Personne {
 	
 	/**
 	 * Constructeur
 	 */
 	public Croupier() {
-		this.main = new ArrayList<Carte>();
+		super();
 	}
 	
 }
