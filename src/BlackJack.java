@@ -125,13 +125,6 @@ public class BlackJack {
 	 * Si son score est de 16 ou moins il tire une carte sinon il stand
 	 */
 	public void tirageCroupier() {
-		//Vérification que tous les joueurs soit stand
-		/*for(Joueur joueur : lesJoueurs.values()) {
-			if(lesJoueurs.get(joueur.getNumJoueur()).stand == false)
-			{
-				System.out.println("Un joueur n'est pas encore stand : "+joueur.getNumJoueur());
-			}
-		}*/
 		//Tirage de carte du croupier
 		while(this.croupier.calculScore() < 17) {
 			if(this.croupier.calculScore() <= 16) {
@@ -166,7 +159,7 @@ public class BlackJack {
 
 					if(this.croupier.calculScore() < scoreJoueur) {
 						//Joueur gagnant
-						System.out.println("Le joueur "+joueur.getNumJoueur()+"a gagne");
+						System.out.println("Le joueur "+joueur.getNumJoueur()+" a gagne");
 						try {
 							joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier");
 						} catch (RemoteException e) {
@@ -193,7 +186,7 @@ public class BlackJack {
 							//Si 21 avec 3 cartes vs 21 avec 2 cartes
 							if(this.croupier.getMain().size() == 3 && lesJoueurs.get(joueur.getNumJoueur()).getMain().size() == 2) {
 								//Joueur gagnant
-								System.out.println("Le joueur "+joueur.getNumJoueur()+"a gagne avec un blackjack");
+								System.out.println("Le joueur "+joueur.getNumJoueur()+" a gagne avec un blackjack");
 								try {
 									joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier, BlackJack pour vous");
 								} catch (RemoteException e) {
@@ -204,7 +197,7 @@ public class BlackJack {
 							//Si 21 avec 2 cartes vs 21 3 cartes
 							if(this.croupier.getMain().size() == 2 && lesJoueurs.get(joueur.getNumJoueur()).getMain().size() == 3) {
 								//Joueur perdant
-								System.out.println("Le joueur "+joueur.getNumJoueur()+"a perdu avec un blackjack");
+								System.out.println("Le joueur "+joueur.getNumJoueur()+" a perdu avec un blackjack");
 								try {
 									joueur.srv.afficherScore("Vous avez perdu avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier, BlackJack pour la banque");
 								} catch (RemoteException e) {

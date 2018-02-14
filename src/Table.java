@@ -7,7 +7,7 @@
  */
 
 public class Table {
-	BlackJack partie;
+	private BlackJack partie;
 	private int taille;
 	private Croupier croupier;
 	/**
@@ -33,6 +33,15 @@ public class Table {
 	 */
 	public int getTaille() {
 		return this.taille;
+	}
+	
+	/**
+	 * Modifie le croupier de la table
+	 * @param croupier
+	 * 		Un croupier
+	 */
+	public void setCroupier(Croupier croupier) {
+		this.croupier = croupier;
 	}
 	
 	/**

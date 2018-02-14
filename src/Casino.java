@@ -26,6 +26,9 @@ public class Casino {
 	public void creerTable(int taille)	{
 		Table table = new Table(taille);
 		this.listTables.add(table);
+		int dernier = this.listTables.lastIndexOf(table);
+		Croupier croupier = this.creerCroupier();
+		this.listTables.get(dernier).setCroupier(croupier);	
 	}
 	
 	/**
