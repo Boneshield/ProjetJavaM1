@@ -7,9 +7,10 @@
  */
 
 public class Table {
-	private BlackJack partie;
+	protected BlackJack partie;
 	private int taille;
 	private Croupier croupier;
+	
 	/**
 	 * Constructeur
 	 * Verifie que la taille fournie est bien comprise entre 1 et 6 sinon mets la table à une taille de 1

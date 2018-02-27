@@ -86,7 +86,7 @@ public class BClient {
 						bl.changeAsValue(numJoueur);
 						break;
 					default:
-						System.out.println("Le choix doit être 1, 2 ou 3");
+						System.out.println("Le choix doit être 1, 2, 3, ou 4");
 				}
 				}
 			}
