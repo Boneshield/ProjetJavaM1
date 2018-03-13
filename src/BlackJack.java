@@ -98,24 +98,8 @@ public class BlackJack {
 		//Un joueur s'arrete (ne demande plus de carte)
 		if(lesJoueurs.get(numJoueur).isStand() == false)
 		{
-			lesJoueurs.get(numJoueur).stand();
+			lesJoueurs.get(numJoueur).setStand(true);
 			this.tirageCroupier();
-		}
-	}
-	
-	/**
-	 * Change la valeur de l'AS du joueur dont le nom est passe en parametre
-	 * mais verifie qu'il possede un AS avant 
-	 * @param numJoueur
-	 * 		lLe nom du joueur
-	 */
-	public void changeAsValue(String numJoueur) {
-		//On parcours les cartes du joueur
-		for(int i=0;i<lesJoueurs.get(numJoueur).getMain().size();i++) {
-			//Si il y a un as, on peut changer sa valeur
-			if(lesJoueurs.get(numJoueur).getMain().get(i).getNomCarte() == Figure.AS) {
-				lesJoueurs.get(numJoueur).changeAsValue(lesJoueurs.get(numJoueur).getMain().get(i));
-			}
 		}
 	}
 	
@@ -132,7 +116,7 @@ public class BlackJack {
 				this.croupier.getMain().add(carte);
 			}
 		}
-		this.croupier.stand();
+		this.croupier.setStand(true);
 	}	
 	
 	/**

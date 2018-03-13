@@ -50,6 +50,10 @@ public abstract class Personne {
 	public void hit(JeuDeCarte jeu) {
 		Carte carte = jeu.TireCarte();
 		this.main.add(carte);
+		//Si le score dépasse 21 mais que le joueur possède une As, alors la valeur de l'as passe de 11 à 1
+		if(this.EstElimine() && this.verifAs()) {
+			this.changeAsValue(this.getAs());
+		}
 	}
 	
 	/**
@@ -77,13 +81,6 @@ public abstract class Personne {
 	}
 	
 	/**
-	 * Passe ce joueur en stand
-	 */
-	public void stand() {
-		this.stand = true;
-	}
-	
-	/**
 	 * Retourne l'etat du joueur pour savoir si il est stand ou non
 	 * @return boolean stand
 	 */
@@ -107,4 +104,29 @@ public abstract class Personne {
 		this.main.clear();
 	}
 	
+	/**
+	 * Verifie que le joueur possede un as dans sa main et renvoie vrai si oui et faux sinon
+	 */
+	public boolean verifAs() {
+		for(int i=0;i<this.main.size();i++) {
+			if(this.main.get(i).getNomCarte() == Figure.AS) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Retourne une carte du joueur si c'est un As et retourne null sinon
+	 * @return as
+	 * 		Carte de figure As
+	 */
+	public Carte getAs() {
+		for(int i=0;i<this.main.size();i++) {
+			if(this.main.get(i).getNomCarte() == Figure.AS) {
+				return this.main.get(i);
+			}
+		}
+		return null;
+	}
 }

@@ -20,10 +20,10 @@ public class BClient {
 	 */
 	@SuppressWarnings("resource")
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		try {
 			CasinoServeur cl = (CasinoServeur) Naming.lookup("rmi://localhost/BlackJack");
-			String numJoueur, numTable;
+			String numJoueur = null, numTable = null;
+			int choix = 0, taille = 0;
 			boolean stand = false;
 						
 			//Création interface client pour le serveur
@@ -36,16 +36,37 @@ public class BClient {
 			lecture = new Scanner(System.in);
 			numJoueur = lecture.next();
 			
+			//Retour après avoir quitté une table
+			
 			//Connexion du joueur a la salle d'attente et affichage des tables
 			System.out.println("Affichage de la liste des tables");
 			cl.connexion(numJoueur, srv);
 			
-			System.out.println("Veuillez choisir une table : ");
-			//lecture du choix de table du client
-			numTable = lecture.next();
-						
+			
+			System.out.println("choisir une table(1) ou bien en créer une(2) ?");
+			
+			do{
+				System.out.println("Entrer 1 ou 2 :");
+				choix = lecture.nextInt();
+				//choix d'une table
+				if(choix == 1) {
+					System.out.println("Veuillez choisir une table : ");
+					//lecture du choix de table du client
+					numTable = lecture.next();
+				}
+				//Creation d'une table
+				if(choix == 2) {
+					System.out.println("Creation table");
+					numTable = numJoueur;
+					System.out.println("Veuillez entrer la taille de la table :");
+					taille = lecture.nextInt();
+					cl.creerTable(taille, numTable);
+					System.out.println("Table créée");
+				}
+			}while(choix != 1 && choix != 2);
+			
 			//Connexion du joueur au jeu
-			System.out.println("Connecté a la table");
+			System.out.println("Connecté a la table "+numTable);
 			System.out.println("Vous etes le joueur "+numJoueur);
 			cl.connexionTable(numTable,numJoueur, srv);
 			System.out.println("Affichage du score :");
@@ -66,7 +87,7 @@ public class BClient {
 				System.out.println("choix : ");
 				
 				//lecture du choix du client
-				int choix = lecture.nextInt();
+				choix = lecture.nextInt();
 			
 				switch(choix) {
 					case 1:
@@ -93,11 +114,12 @@ public class BClient {
 						System.out.println("Vous decidez de vous arreter");
 						stand = true;
 						cl.stand(numTable,numJoueur);
+						
 						System.exit(0);
 					case 4:
-						//carte.getNomCarte() == Figure.AS
-						System.out.println("Vous changez la valeur de l'AS");
-						cl.changeAsValue(numTable,numJoueur);
+						System.out.println("Vous quittez la table"+numTable);
+						cl.quitterTable(numTable, numJoueur);
+						//retour en salle d'attente
 						break;
 					default:
 						System.out.println("Le choix doit être 1, 2, 3, ou 4");

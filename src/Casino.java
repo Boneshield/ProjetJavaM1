@@ -11,7 +11,7 @@ import java.util.HashMap;
 public class Casino {
 
 	protected HashMap<String, Table> listTables;
-	private HashMap<String, Joueur> salleAttente; 
+	protected HashMap<String, Joueur> salleAttente; 
 	
 	/**
 	 * Constructeur
@@ -53,7 +53,7 @@ public class Casino {
 	}
 	
 	/**
-	 * Licencie le croupier, c est a dire le supprime
+	 * Licencie le croupier (supprime le croupier)
 	 */
 	public void licencierCroupier() {
 		
@@ -72,12 +72,12 @@ public class Casino {
 	}
 	
 	/**
-	 * Liste les tables disponibles dans le casino
+	 * Liste les tables disponibles dans le casino pour le joueur passé en paramètre
 	 */
 	public void listeTable(String numJoueur) {
 		for(Table table : listTables.values()) {
 			try {
-				this.salleAttente.get(numJoueur).srv.afficherTexte(table.getNum()+" "+table.toString());
+				this.salleAttente.get(numJoueur).srv.afficherTexte(table.getNum()+" ("+table.toString()+")");
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}

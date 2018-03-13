@@ -2,6 +2,11 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
+/**
+ * Implémentation des méthodes distantes du casino
+ * @author mathieu
+ * @see Casino, CasinoServeur
+ */
 public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServeur {
 
 	private Casino cn;
@@ -9,7 +14,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	/**
 	 * Constructeur
 	 * @param cn
-	 * 			un objet de classe Casino
+	 * 			Un objet de classe Casino
 	 * @see Casino
 	 * @throws RemoteException
 	 * 
@@ -28,6 +33,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 */
 	public void creerTable(int taille, String nomJoueur) {
 		this.cn.creerTable(nomJoueur, taille);
+		System.out.println("Creation table par "+nomJoueur);
 	}
 	
 	/**
@@ -55,10 +61,26 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 */
 	public void connexionTable(String numTable, String numJoueur, Client srv) throws RemoteException {
 		this.cn.listTables.get(numTable).joinTable(numJoueur, srv);
-		System.out.println("Creation du joueur : "+numJoueur);
+		System.out.println("Connexion du joueur : "+numJoueur+" a la table "+numTable);
+		
+		//Distribution temporaire
 		this.cn.listTables.get(numTable).partie.hit(numJoueur);
 		this.cn.listTables.get(numTable).partie.hit(numJoueur);
+		
+		//On retire le joueur de la salle d'attente
+		this.cn.salleAttente.remove(numJoueur);
 	}
+	
+	/**
+	 * Fait quitter la table au joueur
+	 * @param numJoueur
+	 * 		Chaine de caractere designant le numero du joueur
+	 * @throws RemoteException
+	 */
+	public void quitterTable(String numTable, String numJoueur) throws RemoteException {
+		this.cn.listTables.get(numTable).quitTable(numJoueur);
+	}
+	
 	
 	/**
 	 * Demande au croupier de tirer une carte
@@ -89,17 +111,6 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 		this.cn.listTables.get(ntable).partie.tirageCroupier();
 		//Calcul des gains
 		this.cn.listTables.get(ntable).partie.calculGain();
-	}
-
-	/**
-	 * Permet au client de changer la valeur de l'as (1 ou 11)
-	 * @param numJoueur
-	 * 			le numero du joueur
-	 * @throws RemoteException
-	 */
-	@Override
-	public void changeAsValue(String ntable, String numJoueur) throws RemoteException{
-		this.cn.listTables.get(ntable).partie.changeAsValue(numJoueur);
 	}
 
 	/**

@@ -1,6 +1,11 @@
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+/**
+ * Interface pour executer les commandes du casino
+ * @author mathieu
+ * @see CasinoServeurImpl
+ */
 public interface CasinoServeur extends java.rmi.Remote {
 
 	/**
@@ -25,6 +30,15 @@ public interface CasinoServeur extends java.rmi.Remote {
 	 */
 	 void connexionTable(String numTable, String numJoueur, Client srv) throws RemoteException; 
 	
+	 /**
+		 * Cree une table pour le joueur
+		 * @param taille
+		 * 		taille entier de 1 a 6
+		 * @param nomJoueur
+		 * 		chaine de caractere definissant nom du joueur
+		 */
+	void creerTable(int taille, String nomJoueur) throws RemoteException;
+	 
 	/**
 	 * Affiche la main du joueur
 	 * @param numJoueur
@@ -32,6 +46,14 @@ public interface CasinoServeur extends java.rmi.Remote {
 	 * @throws RemoteException
 	 */
 	void afficherMain(String ntable, String numJoueur) throws RemoteException;
+	
+	/**
+	 * Fait quitter la table au joueur
+	 * @param numJoueur
+	 * 		Chaine de caractere designant le numero du joueur
+	 * @throws RemoteException
+	 */
+	void quitterTable(String numTable, String numJoueur) throws RemoteException;
 	
 	/**
 	 * Demande la main du joueur au serveur pour l'afficher ensuite
@@ -57,14 +79,6 @@ public interface CasinoServeur extends java.rmi.Remote {
 	 * @throws RemoteException
 	 */
 	void stand(String ntable, String numJoueur) throws RemoteException;
-	
-	/**
-	 * Permet au client de changer la valeur de l'as (1 ou 11)
-	 * @param numJoueur
-	 * 			le numéro du joueur
-	 * @throws RemoteException
-	 */
-	void changeAsValue(String ntable, String numJoueur) throws RemoteException;
 	
 	/**
 	 * Donne le nombre de joueurs

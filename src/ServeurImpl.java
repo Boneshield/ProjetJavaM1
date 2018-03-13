@@ -82,18 +82,6 @@ public class ServeurImpl extends UnicastRemoteObject implements Serveur {
 	}
 
 	/**
-	 * Permet au client de changer la valeur de l'as (1 ou 11)
-	 * @param numJoueur
-	 * 			le numero du joueur
-	 * @throws RemoteException
-	 */
-	@Override
-	public void changeAsValue(String numJoueur) throws RemoteException{
-		// TODO Auto-generated method stub
-		this.bj.changeAsValue(numJoueur);
-	}
-
-	/**
 	 * Affiche la main du joueur
 	 * @param numJoueur
 	 * 			le numero du joueur

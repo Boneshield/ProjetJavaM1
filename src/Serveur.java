@@ -55,14 +55,6 @@ public interface Serveur extends java.rmi.Remote {
 	void stand(String numJoueur) throws RemoteException;
 	
 	/**
-	 * Permet au client de changer la valeur de l'as (1 ou 11)
-	 * @param numJoueur
-	 * 			le numéro du joueur
-	 * @throws RemoteException
-	 */
-	void changeAsValue(String numJoueur) throws RemoteException;
-	
-	/**
 	 * Donne le nombre de joueurs
 	 * @return le nombre de joueur : type entier
 	 * @throws RemoteException

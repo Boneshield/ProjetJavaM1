@@ -73,6 +73,7 @@ public class Table {
 	 * 		Le nom du joueur 
 	 */
 	public void quitTable(String numJoueur) {
+		System.out.println("Joueur "+numJoueur+" a ete elimine");
 		this.partie.lesJoueurs.remove(numJoueur);
 	}
 	
@@ -81,7 +82,7 @@ public class Table {
 	 * @return Chaine de caratere affichant les infos de la table 
 	 */
 	public String toString() {
-		return ("Taille de la table : "+this.taille+"\n"+this.partie.listJoueur());
+		return (this.partie.lesJoueurs.size()+"/"+this.taille);
 	}
 }
 

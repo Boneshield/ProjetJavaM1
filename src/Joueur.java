@@ -43,7 +43,6 @@ public class Joueur extends Personne{
 		try {
 			srv.afficherMainJoueur(this.afficheMain());
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
