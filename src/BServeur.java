@@ -22,16 +22,21 @@ public class BServeur {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		ServeurImpl bi;
-		BlackJack bl = new BlackJack();
-		
+		CasinoServeurImpl ci;
+		Casino cn = new Casino();
+		//Création tables permanentes
+			cn.creerTable("Casino1", 2);
+			cn.creerTable("Casino2", 3);
+			cn.creerTable("Casino3", 4);
+			cn.creerTable("Casino4", 5);
+			cn.creerTable("Casino5", 6);
 		try {
-			bi = new ServeurImpl(bl);
+			ci = new CasinoServeurImpl(cn);
 			try {
 				//Démarre le rmiregistry
 				LocateRegistry.createRegistry(1099);
 				//Déclaration auprès du serveur de noms
-				Naming.rebind("BlackJack", bi);
+				Naming.rebind("BlackJack", ci);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -41,7 +46,7 @@ public class BServeur {
 			}
 			
 				try {
-					Serveur b = (Serveur) Naming.lookup("rmi://localhost/BlackJack");
+					CasinoServeur cl = (CasinoServeur) Naming.lookup("rmi://localhost/BlackJack");
 					//attente des joueurs
 					System.out.println("BlackJack Serveur");
 					System.out.println("*****************");

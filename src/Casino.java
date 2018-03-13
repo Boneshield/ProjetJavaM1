@@ -1,4 +1,6 @@
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Hebergeur de tables, peut creer des tables et des croupiers ainsi que les supprimer
@@ -8,27 +10,38 @@ import java.util.ArrayList;
 
 public class Casino {
 
-	ArrayList<Table> listTables;
+	protected HashMap<String, Table> listTables;
+	private HashMap<String, Joueur> salleAttente; 
 	
 	/**
 	 * Constructeur
 	 */
 	public Casino() {
-		this.listTables = new ArrayList<Table>();
+		this.listTables = new HashMap<String, Table>();
+		this.salleAttente = new HashMap<String, Joueur>();
+	}
+
+	/**
+	 * Permet de creer une table avec une taille passee en parametre et son numero
+	 * @param taille
+	 * 		Entier qui est le nombre de joueur a table
+	 * @param unmTable
+	 * 		Chaine de caractere designant le 
+	 * @return Table nouvelle table
+	 */
+	public void creerTable(String numTable, int taille)	{
+		Table table = new Table(numTable, taille);
+		this.listTables.put(numTable,table);
+		Croupier croupier = this.creerCroupier();
+		this.listTables.get(numTable).setCroupier(croupier);	
 	}
 	
 	/**
-	 * Permet de creer une table avec une taille passee en parametre
-	 * @param taille
-	 * 		Entier qui est le nombre de joueur a table
-	 * @return Table nouvelle table
+	 * Supprime une table de la liste des tables
+	 * @param numTable
 	 */
-	public void creerTable(int taille)	{
-		Table table = new Table(taille);
-		this.listTables.add(table);
-		int dernier = this.listTables.lastIndexOf(table);
-		Croupier croupier = this.creerCroupier();
-		this.listTables.get(dernier).setCroupier(croupier);	
+	public void supprimerTable(String numTable) {
+		this.listTables.remove(numTable);
 	}
 	
 	/**
@@ -40,12 +53,34 @@ public class Casino {
 	}
 	
 	/**
+	 * Licencie le croupier, c est a dire le supprime
+	 */
+	public void licencierCroupier() {
+		
+	}
+	
+	/**
+	 * Ajoute le joueur dans la salle d'attente
+	 * @param numJoueur
+	 * 		Chaine de caractere designant le nom du joueur
+	 * @param srv
+	 * 		Interface du client
+	 */
+	public void arriveJoueur(String numJoueur, Client srv) {
+		this.salleAttente.put(numJoueur, new Joueur(numJoueur, srv));
+		System.out.println("Joueur "+numJoueur+" arrive en salle d attente");
+	}
+	
+	/**
 	 * Liste les tables disponibles dans le casino
 	 */
-	public void listeTable() {
-		System.out.println("Voici la liste des tables :");
-		for(int i = 0;i<this.listTables.size();i++) {
-			this.listTables.get(i).toString();
+	public void listeTable(String numJoueur) {
+		for(Table table : listTables.values()) {
+			try {
+				this.salleAttente.get(numJoueur).srv.afficherTexte(table.getNum()+" "+table.toString());
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

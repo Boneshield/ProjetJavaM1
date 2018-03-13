@@ -3,11 +3,12 @@
  * Hebergeur de parties de Black Jack
  * Il y a 1 a 6 joueurs a une table
  * @author mathieu
- *@see BlackJack,Joueur
+ * @see BlackJack,Joueur
  */
 
 public class Table {
 	protected BlackJack partie;
+	private String numTable;
 	private int taille;
 	private Croupier croupier;
 	
@@ -17,8 +18,9 @@ public class Table {
 	 * @param taille
 	 * 		Entier definissant le nombre de joueur a la table
 	 */
-	public Table(int taille) {
+	public Table(String numTable, int taille) {
 		this.partie = new BlackJack();
+		this.numTable = numTable;
 		if(taille < 1 || taille > 6) {
 			System.out.println("La taille doit être comprise entre 1 et 6");
 			System.out.println("Mise à 1 par défaut");
@@ -27,6 +29,15 @@ public class Table {
 		else {
 			this.taille = taille;
 		}
+	}
+	
+	/**
+	 * Retourne le numero(nom) de la table
+	 * @return numTable
+	 * 		Chaine designant le numero de la table
+	 */
+	public String getNum() {
+		return this.numTable;
 	}
 	
 	/**

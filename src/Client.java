@@ -23,4 +23,12 @@ public interface Client extends java.rmi.Remote {
 	 */
 	void afficherScore(String scoreJoueur) throws RemoteException; 
 	
+	/**
+	 * Affiche le texte transmis par le serveur
+	 * @param texte
+	 * 		Texte envoyé par le serveur
+	 * @throws RemoteException
+	 */
+	void afficherTexte(String texte) throws RemoteException;
+	
 }

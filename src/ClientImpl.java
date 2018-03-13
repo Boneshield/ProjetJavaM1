@@ -18,7 +18,6 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 	 */
 	protected ClientImpl() throws RemoteException {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 	
@@ -30,7 +29,6 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 	 */
 	@Override
 	public void afficherMainJoueur(String mainJoueur) throws RemoteException {
-		// TODO Auto-generated method stub
 		System.out.println(mainJoueur);
 		
 	}
@@ -43,6 +41,12 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 	 */
 	public void afficherScore(String scoreJoueur) throws RemoteException {
 		System.out.println(scoreJoueur);
+	}
+
+
+	@Override
+	public void afficherTexte(String texte) throws RemoteException {
+		System.out.println(texte);
 	}
 
 }

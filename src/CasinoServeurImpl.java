@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServeur {
 
-	Casino cn;
+	private Casino cn;
 	
 	/**
 	 * Constructeur
@@ -16,7 +16,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 */
 	public CasinoServeurImpl(Casino cn) throws RemoteException {
 		super();
-		this.cn= cn;
+		this.cn = cn;
 	}
 
 	/**
@@ -27,8 +27,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * 		chaine de caractere definissant nom du joueur
 	 */
 	public void creerTable(int taille, String nomJoueur) {
-		this.cn.creerTable(taille);
-		
+		this.cn.creerTable(nomJoueur, taille);
 	}
 	
 	/**
@@ -40,15 +39,27 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * @throws RemoteException
 	 */
 	@Override
-	public void connexion(int ntable, String numJoueur, Client srv) throws RemoteException {
-		// TODO Auto-generated method stub
-			System.out.println("Connexion de "+srv);
-			this.cn.listTables.get(ntable).joinTable(numJoueur, srv);
-			System.out.println("Creation du joueur : "+numJoueur);
-			this.cn.listTables.get(ntable).partie.hit(numJoueur);
-			this.cn.listTables.get(ntable).partie.hit(numJoueur);
+	public void connexion(String numJoueur, Client srv) throws RemoteException {
+			System.out.println("Connexion de "+numJoueur);
+			this.cn.arriveJoueur(numJoueur, srv);
+			System.out.println("Listing des tables pour "+numJoueur);
+			this.cn.listeTable(numJoueur);
 	}
 
+	/**
+	 * Connecte le joueur a la table numTable
+	 * @param numTable
+	 * @param numJoueur
+	 * @param srv
+	 * @throws RemoteException
+	 */
+	public void connexionTable(String numTable, String numJoueur, Client srv) throws RemoteException {
+		this.cn.listTables.get(numTable).joinTable(numJoueur, srv);
+		System.out.println("Creation du joueur : "+numJoueur);
+		this.cn.listTables.get(numTable).partie.hit(numJoueur);
+		this.cn.listTables.get(numTable).partie.hit(numJoueur);
+	}
+	
 	/**
 	 * Demande au croupier de tirer une carte
 	 * @param numJoueur
@@ -56,13 +67,12 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * @throws RemoteException
 	 */
 	@Override
-	public void hit(int ntable, String numJoueur) throws RemoteException {
-		// TODO Auto-generated method stub
-		if(this.cn.listTables.get(ntable).partie.lesJoueurs.get(numJoueur).EstElimine()) {
-			this.cn.listTables.get(ntable).partie.elimination(numJoueur);
+	public void hit(String numTable, String numJoueur) throws RemoteException {
+		if(this.cn.listTables.get(numTable).partie.lesJoueurs.get(numJoueur).EstElimine()) {
+			this.cn.listTables.get(numTable).partie.elimination(numJoueur);
 		}
 		else {
-			this.cn.listTables.get(ntable).partie.hit(numJoueur);
+			this.cn.listTables.get(numTable).partie.hit(numJoueur);
 		}	
 	}
 
@@ -73,8 +83,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * @throws RemoteException
 	 */
 	@Override
-	public void stand(int ntable, String numJoueur) throws RemoteException {
-		// TODO Auto-generated method stub
+	public void stand(String ntable, String numJoueur) throws RemoteException {
 		this.cn.listTables.get(ntable).partie.stand(numJoueur);
 		//Tirage du croupier
 		this.cn.listTables.get(ntable).partie.tirageCroupier();
@@ -89,8 +98,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * @throws RemoteException
 	 */
 	@Override
-	public void changeAsValue(int ntable, String numJoueur) throws RemoteException{
-		// TODO Auto-generated method stub
+	public void changeAsValue(String ntable, String numJoueur) throws RemoteException{
 		this.cn.listTables.get(ntable).partie.changeAsValue(numJoueur);
 	}
 
@@ -101,8 +109,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * @throws RemoteException
 	 */
 	@Override
-	public void afficherMain(int nbtable, String numJoueur) throws RemoteException {
-		// TODO Auto-generated method stub
+	public void afficherMain(String nbtable, String numJoueur) throws RemoteException {
 		this.cn.listTables.get(nbtable).partie.afficherMain(numJoueur);
 	}
 
@@ -114,8 +121,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * @throws RemoteException
 	 */
 	@Override
-	public ArrayList<Carte> returnMain(int nbtable, String numJoueur) throws RemoteException {
-		// TODO Auto-generated method stub
+	public ArrayList<Carte> returnMain(String nbtable, String numJoueur) throws RemoteException {
 		return this.cn.listTables.get(nbtable).partie.lesJoueurs.get(numJoueur).getMain();
 	}
 
@@ -125,8 +131,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * @throws RemoteException
 	 */
 	@Override
-	public int listJoueur(int nbtable) throws RemoteException {
-		// TODO Auto-generated method stub
+	public int listJoueur(String nbtable) throws RemoteException {
 		return this.cn.listTables.get(nbtable).partie.lesJoueurs.size();
 	}
 	
@@ -137,31 +142,8 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * @return donne le resulat de la manche
 	 * @throws RemoteException
 	 */
-	public int score(int nbtable, String numJoueur) throws RemoteException {
+	public int score(String nbtable, String numJoueur) throws RemoteException {
 		return this.cn.listTables.get(nbtable).partie.lesJoueurs.get(numJoueur).calculScore();
 	}
 
-	/**
-	 * Cree une table avec le joueur comme createur
-	 * @param numJoueur
-	 * 		Chaine de caractere definissant le nom du joueur
-	 * @param srv
-	 * 		Interface pour que le serveur puisse acceder au client
-	 * @see Client,Joueur
-	 */
-	@Override
-	public void tablationJoueur(int nbtable, String numJoueur, Client srv) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * Affiche la liste des tables disponibles pour le joueur dans le casino
-	 */
-	@Override
-	public void afficherListTable() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

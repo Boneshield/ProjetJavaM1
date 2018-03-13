@@ -18,37 +18,51 @@ public class BClient {
 	 * Affichage du menu
 	 * @param args
 	 */
+	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		try {
-			Serveur bl = (Serveur) Naming.lookup("rmi://localhost/BlackJack");
-			String numJoueur;
+			CasinoServeur cl = (CasinoServeur) Naming.lookup("rmi://localhost/BlackJack");
+			String numJoueur, numTable;
 			boolean stand = false;
+						
+			//Création interface client pour le serveur
+			ClientImpl srv = new ClientImpl();
+			System.out.println("BlackJack version client 3");
+			
 			System.out.println("Veuillez entrer un nom de joueur :");
 			//lecture du nom/pseudo/numéro du client
 			Scanner lecture;
 			lecture = new Scanner(System.in);
 			numJoueur = lecture.next();
 			
-			//String srv = "rmi://localhost/BlackJack";
-			ClientImpl srv = new ClientImpl();
-			bl.connexion(numJoueur, srv);
-			System.out.println("Connecté au serveur");
+			//Connexion du joueur a la salle d'attente et affichage des tables
+			System.out.println("Affichage de la liste des tables");
+			cl.connexion(numJoueur, srv);
+			
+			System.out.println("Veuillez choisir une table : ");
+			//lecture du choix de table du client
+			numTable = lecture.next();
+						
+			//Connexion du joueur au jeu
+			System.out.println("Connecté a la table");
 			System.out.println("Vous etes le joueur "+numJoueur);
+			cl.connexionTable(numTable,numJoueur, srv);
 			System.out.println("Affichage du score :");
-			System.out.println(bl.score(numJoueur));
+			System.out.println(cl.score(numTable,numJoueur));
 			
 			//affichage menu
 			while(true){
 				if(!stand) {
 				System.out.println("******* MENU *******");
-				System.out.println("Il y a "+bl.listJoueur()+" joueurs");
+				System.out.println("Table : "+numTable);
+				System.out.println("Il y a "+cl.listJoueur(numTable)+" joueurs");
 				System.out.println(" ");
 				System.out.println("Que voulez vous faire ?");
 				System.out.println("1.Main (Afficher la main du joueur)");
 				System.out.println("2.Hit (Tirer une carte)");
-				System.out.println("3. Stand (Arreter de miser)");
-				System.out.println("4. Changer la valeur de l'AS");
+				System.out.println("3.Stand (Arreter de miser)");
+				System.out.println("4.Quitter la table");
 				System.out.println("choix : ");
 				
 				//lecture du choix du client
@@ -58,19 +72,19 @@ public class BClient {
 					case 1:
 						//Main
 						System.out.println("Voici votre main");
-						bl.afficherMain(numJoueur);
+						cl.afficherMain(numTable,numJoueur);
 						System.out.println("Affichage du score :");
-						System.out.println(bl.score(numJoueur));
+						System.out.println(cl.score(numTable,numJoueur));
 						break;
 					case 2:
 						//hit : demande une carte
 						System.out.println("Vous demandez une carte");
-						bl.hit(numJoueur);
+						cl.hit(numTable,numJoueur);
 						System.out.println("Affichage du score :");
-						System.out.println(bl.score(numJoueur));
-						if(bl.score(numJoueur) > 21) {
+						System.out.println(cl.score(numTable,numJoueur));
+						if(cl.score(numTable,numJoueur) > 21) {
 							System.out.println("Vous avez été éliminé");
-							bl.hit(numJoueur);
+							cl.hit(numTable,numJoueur);
 							System.exit(0);
 						}
 						break;
@@ -78,12 +92,12 @@ public class BClient {
 						//stand : passe son tour et attends le score
 						System.out.println("Vous decidez de vous arreter");
 						stand = true;
-						bl.stand(numJoueur);
+						cl.stand(numTable,numJoueur);
 						System.exit(0);
 					case 4:
 						//carte.getNomCarte() == Figure.AS
 						System.out.println("Vous changez la valeur de l'AS");
-						bl.changeAsValue(numJoueur);
+						cl.changeAsValue(numTable,numJoueur);
 						break;
 					default:
 						System.out.println("Le choix doit être 1, 2, 3, ou 4");
