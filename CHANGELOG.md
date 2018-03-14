@@ -36,5 +36,5 @@ Methodes de bases pour chaque classe (setter, getter...)
 Pioche des cartes, état stand, calcul du score
 Bug : RMI ne fonctionne pas (soucis de compréhension)
 
-## 0.1 Creation du projet
+## 0.1 : Creation du projet
 Features : Creation des classes Carte, jeuDeCarte, Figure, Couleur.
