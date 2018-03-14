@@ -5,7 +5,7 @@ Casino héberge les tables, liste des tables au joueur
 Rework du client avec l'interface du casino
 Methode de suppression des tables
 
-### 2.1
+### 2.1 :
 
 Features : Gestion des tables, interfaces Casino
 Dissociation Personne, Joueur, Croupier (feature V3)
