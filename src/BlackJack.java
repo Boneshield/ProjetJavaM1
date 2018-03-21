@@ -1,6 +1,7 @@
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * Classe qui gere les joueurs, le croupier et calcule les scores
@@ -10,8 +11,10 @@ import java.util.HashMap;
 public class BlackJack {
 	
 	private JeuDeCarte jeu;
-	HashMap<String, Joueur> lesJoueurs;
+	protected HashMap<String, Joueur> lesJoueurs;
+	protected LinkedList<Joueur> enAttente; 
 	private Croupier croupier;
+	private boolean enCours;
 	
 	/**
 	 * Constructeur
@@ -23,17 +26,41 @@ public class BlackJack {
 		Croupier croupier = new Croupier();
 		this.croupier = croupier;
 		this.jeu = new JeuDeCarte();
+		this.enCours = false;
 	}
 	
 	/**
-	 * Ajoute un joueur dans la liste
+	 * Ajoute un joueur dans la partie
 	 * @param numJoueur
 	 * 		Le nom du joueur
 	 * @param srv
 	 * 		L'interface du joueur
 	 */
 	public void creerJoueur(String numJoueur, Client srv) {
-		this.lesJoueurs.put(numJoueur, new Joueur(numJoueur, srv));
+		if(this.enCours) {
+			//partie en cours mets le joueur en attente de la fin de la partie
+			System.out.println(numJoueur+" rejoins la file d'attente");
+			this.enAttente.add(new Joueur(numJoueur, srv));
+		}
+		else {
+			//Lancement du timer d'attente si c'est le premier joueur
+			if(this.lesJoueurs.isEmpty()) {
+				//Ajout du joueur à la partie
+				this.lesJoueurs.put(numJoueur, new Joueur(numJoueur, srv));
+				this.informJoueurs("Le joueur "+numJoueur+" rejoins la partie");
+				System.out.println("En attente d'autres joueurs");
+				//Attente de 30 secondes
+				new CountDown(30);
+				this.enCours = true;
+				System.out.println("La partie commence");
+				this.distribuer();
+			}
+			else {
+				//Ajout du joueur à la partie
+				this.lesJoueurs.put(numJoueur, new Joueur(numJoueur, srv));
+				this.informJoueurs("Le joueur "+numJoueur+" rejoins la partie");
+			}
+		}
 	}
 	
 	/**
@@ -41,16 +68,15 @@ public class BlackJack {
 	 * 
 	 */
 	public void distribuer() {
-		//tant que le un joueur n'a pas deux cartes, lui donner une carte
+		//tant que un joueur n'a pas deux cartes, lui donner une carte
 		System.out.println("tirage des joueurs");
-		for(Joueur joueur : lesJoueurs.values()) {
+		for(Joueur joueur : this.lesJoueurs.values()) {
+			System.out.println("tirage du joueur "+joueur.getNumJoueur());
 			do {
-				System.out.println("tirage du joueur "+joueur.getNumJoueur());
-				lesJoueurs.get(joueur.getNumJoueur()).hit(jeu);
-				System.out.println("taille de la main de "+lesJoueurs.get(joueur.getNumJoueur()).getMain().size());
-			} while(lesJoueurs.get(joueur.getNumJoueur()).getMain().size() != 2);
+				this.lesJoueurs.get(joueur.getNumJoueur()).hit(jeu);
+			} while(this.lesJoueurs.get(joueur.getNumJoueur()).getMain().size() != 2);
 		}
-		System.out.println("tirage croupier");
+		System.out.println("tirage du croupier");
 		//Tirage du croupier
 		this.croupier.hit(jeu);
 		this.croupier.hit(jeu);
@@ -63,9 +89,9 @@ public class BlackJack {
 	 */
 	public void hit(String numJoueur) {
 		//Demande une carte pour un joueur si il n'a pas encore stand
-		if(lesJoueurs.get(numJoueur).isStand() == false)
+		if(this.lesJoueurs.get(numJoueur).isStand() == false)
 		{
-			lesJoueurs.get(numJoueur).hit(jeu);
+			this.lesJoueurs.get(numJoueur).hit(jeu);
 		}
 	}
 	
@@ -79,13 +105,14 @@ public class BlackJack {
 		//Si le score du joueur dépasse 21 alors il est éliminé
 		if(lesJoueurs.get(numJoueur).EstElimine()) {
 			try {
-				lesJoueurs.get(numJoueur).srv.afficherMainJoueur("Vous avez été éliminé...vous quittez la table");
+				this.lesJoueurs.get(numJoueur).srv.afficherMainJoueur("Vous avez été éliminé...vous quittez la table");
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			this.informJoueurs("Le joueur "+numJoueur+" a ete elimine");
 			System.out.println("Joueur "+numJoueur+" a ete elimine");
-			lesJoueurs.remove(numJoueur);
+			this.lesJoueurs.remove(numJoueur);
 		}
 	}
 	
@@ -96,9 +123,10 @@ public class BlackJack {
 	 */
 	public void stand(String numJoueur) {
 		//Un joueur s'arrete (ne demande plus de carte)
-		if(lesJoueurs.get(numJoueur).isStand() == false)
+		if(this.lesJoueurs.get(numJoueur).isStand() == false)
 		{
-			lesJoueurs.get(numJoueur).setStand(true);
+			this.lesJoueurs.get(numJoueur).setStand(true);
+			
 			this.tirageCroupier();
 		}
 	}
@@ -110,6 +138,7 @@ public class BlackJack {
 	 */
 	public void tirageCroupier() {
 		//Tirage de carte du croupier
+		this.informJoueurs("Tirage du croupier");
 		while(this.croupier.calculScore() < 17) {
 			if(this.croupier.calculScore() <= 16) {
 				Carte carte = jeu.TireCarte();
@@ -127,8 +156,8 @@ public class BlackJack {
 		//Compare les scores joueur/banque
 		if(this.croupier.isStand() == true) {
 			//Quatre cas de figure
-				for(Joueur joueur : lesJoueurs.values()) {
-					int scoreJoueur = lesJoueurs.get(joueur.getNumJoueur()).calculScore();
+				for(Joueur joueur : this.lesJoueurs.values()) {
+					int scoreJoueur = this.lesJoueurs.get(joueur.getNumJoueur()).calculScore();
 					//croupier perdant
 					if(this.croupier.calculScore() > 21) {
 						//Tout les joueurs gagnent
@@ -168,7 +197,7 @@ public class BlackJack {
 						if(this.croupier.calculScore() == 21 && scoreJoueur == 21) {
 							//Egalité à 21 avec quatre cas
 							//Si 21 avec 3 cartes vs 21 avec 2 cartes
-							if(this.croupier.getMain().size() == 3 && lesJoueurs.get(joueur.getNumJoueur()).getMain().size() == 2) {
+							if(this.croupier.getMain().size() == 3 && this.lesJoueurs.get(joueur.getNumJoueur()).getMain().size() == 2) {
 								//Joueur gagnant
 								System.out.println("Le joueur "+joueur.getNumJoueur()+" a gagne avec un blackjack");
 								try {
@@ -179,7 +208,7 @@ public class BlackJack {
 								}
 							}
 							//Si 21 avec 2 cartes vs 21 3 cartes
-							if(this.croupier.getMain().size() == 2 && lesJoueurs.get(joueur.getNumJoueur()).getMain().size() == 3) {
+							if(this.croupier.getMain().size() == 2 && this.lesJoueurs.get(joueur.getNumJoueur()).getMain().size() == 3) {
 								//Joueur perdant
 								System.out.println("Le joueur "+joueur.getNumJoueur()+" a perdu avec un blackjack");
 								try {
@@ -210,17 +239,24 @@ public class BlackJack {
 	 */
 	public void recommencerPartie() {
 		//Réinitialiser tout les joueurs
-		for(Joueur joueur : lesJoueurs.values()) {
+		for(Joueur joueur : this.lesJoueurs.values()) {
 			//Vider les mains de tout les joueurs
 			joueur.viderMain();
 			//Repasser le stand des joueurs à false
 			joueur.setStand(false);
+			this.informJoueurs("La partie recommence");
 		}
 		//Réinitialiser le croupier
 			//Vider sa main
 			this.croupier.viderMain();
 			//Repasser son stand à false
 			this.croupier.setStand(false);
+			
+		//Ajout des joueurs en attente si il y en a
+		while(!this.enAttente.isEmpty()) {
+			this.lesJoueurs.put(this.enAttente.getFirst().getNumJoueur(),this.enAttente.getFirst());
+			this.informJoueurs("Le joueur "+this.enAttente.removeFirst()+" rejoins la partie");
+		}
 	}
 	
 	
@@ -232,7 +268,7 @@ public class BlackJack {
 	public void afficherMain(String numJoueur) {
 		// TODO Auto-generated method stub
 		try {
-			this.lesJoueurs.get(numJoueur).srv.afficherMainJoueur(numJoueur+" "+lesJoueurs.get(numJoueur).afficheMain());
+			this.lesJoueurs.get(numJoueur).srv.afficherMainJoueur(numJoueur+" "+this.lesJoueurs.get(numJoueur).afficheMain());
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -249,6 +285,22 @@ public class BlackJack {
 			listJoueur = (listJoueur+" "+joueur+" "+joueur.getNumJoueur()+"\n");
 		}
 		return listJoueur; 
+	}
+	
+	/**
+	 * Ecris a tous les joueurs un information
+	 * @param info
+	 * 		chaine de caractere designant une info
+	 */
+	public void informJoueurs(String info) {
+		for(Joueur joueur : this.lesJoueurs.values()) {
+			try {
+				joueur.srv.afficherTexte(info);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }
 	

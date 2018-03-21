@@ -43,10 +43,13 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 		System.out.println(scoreJoueur);
 	}
 
-
-	@Override
+	/**
+	 * Affiche le texte transmis par le serveur
+	 * @param texte
+	 * 		Texte envoyé par le serveur
+	 * @throws RemoteException
+	 */
 	public void afficherTexte(String texte) throws RemoteException {
 		System.out.println(texte);
 	}
-
 }

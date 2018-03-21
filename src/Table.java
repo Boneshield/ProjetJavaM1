@@ -73,7 +73,7 @@ public class Table {
 	 * 		Le nom du joueur 
 	 */
 	public void quitTable(String numJoueur) {
-		System.out.println("Joueur "+numJoueur+" a ete elimine");
+		System.out.println("Joueur "+numJoueur+" a quitte la table");
 		this.partie.lesJoueurs.remove(numJoueur);
 	}
 	

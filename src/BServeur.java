@@ -48,7 +48,7 @@ public class BServeur {
 				try {
 					CasinoServeur cl = (CasinoServeur) Naming.lookup("rmi://localhost/BlackJack");
 					//attente des joueurs
-					System.out.println("BlackJack Serveur");
+					System.out.println("BlackJack Serveur V3");
 					System.out.println("*****************");
 					System.out.println("attente de joueur");
 				

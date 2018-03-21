@@ -60,13 +60,9 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * @throws RemoteException
 	 */
 	public void connexionTable(String numTable, String numJoueur, Client srv) throws RemoteException {
-		this.cn.listTables.get(numTable).joinTable(numJoueur, srv);
 		System.out.println("Connexion du joueur : "+numJoueur+" a la table "+numTable);
-		
-		//Distribution temporaire
-		this.cn.listTables.get(numTable).partie.hit(numJoueur);
-		this.cn.listTables.get(numTable).partie.hit(numJoueur);
-		
+		this.cn.listTables.get(numTable).joinTable(numJoueur, srv);
+				
 		//On retire le joueur de la salle d'attente
 		this.cn.salleAttente.remove(numJoueur);
 	}
@@ -107,8 +103,6 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	@Override
 	public void stand(String ntable, String numJoueur) throws RemoteException {
 		this.cn.listTables.get(ntable).partie.stand(numJoueur);
-		//Tirage du croupier
-		this.cn.listTables.get(ntable).partie.tirageCroupier();
 		//Calcul des gains
 		this.cn.listTables.get(ntable).partie.calculGain();
 	}

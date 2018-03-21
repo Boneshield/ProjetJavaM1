@@ -30,5 +30,5 @@ public interface Client extends java.rmi.Remote {
 	 * @throws RemoteException
 	 */
 	void afficherTexte(String texte) throws RemoteException;
-	
+
 }
