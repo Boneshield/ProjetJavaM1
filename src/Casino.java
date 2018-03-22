@@ -55,7 +55,7 @@ public class Casino {
 	/**
 	 * Licencie le croupier (supprime le croupier)
 	 */
-	public void licencierCroupier() {
+	public void licencierCroupier(Croupier croupier) {
 		
 	}
 	

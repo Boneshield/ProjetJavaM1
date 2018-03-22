@@ -69,14 +69,15 @@ public class BClient {
 				System.out.println("Vous etes le joueur "+numJoueur);
 				cl.connexionTable(numTable,numJoueur, srv);
 				
+				System.out.println("En attente du serveur");
 				//Si le joueur est en dans la file d'attente, on doit attendre
-				while(true) {
-					if(statut) {				
-					break;
-					}
-					else {
-						
-					}
+				//Tant qu'il n'a pas de carte dans sa main, il attend le serveur
+				while(cl.returnTailleMain(numTable, numJoueur) == -1 || cl.returnTailleMain(numTable, numJoueur) == 0) {
+					//tantque partiecommencée != 1
+					//try
+					//cl.returnTailleMain
+					//catch
+					//ignore l'erreur
 				}
 				
 				System.out.println("Affichage du score :");
@@ -116,7 +117,6 @@ public class BClient {
 								if(cl.score(numTable,numJoueur) > 21) {
 									System.out.println("Vous avez été éliminé");
 									cl.hit(numTable,numJoueur);
-									System.exit(0);
 								}
 								break;
 							case 3:
@@ -129,6 +129,7 @@ public class BClient {
 								System.out.println("Vous quittez la table"+numTable);
 								cl.quitterTable(numTable, numJoueur);
 								//retour en salle d'attente
+								statut = true;
 								break;
 							default:
 								System.out.println("Le choix doit être 1, 2, 3, ou 4");
@@ -150,8 +151,12 @@ public class BClient {
 							break;
 						}
 					}
+					if(statut) {
+						break;
+					}
 				}
 				stand = false;
+				statut = false;
 			}
 			
 		} catch (MalformedURLException e) {

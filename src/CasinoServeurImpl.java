@@ -103,7 +103,8 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	@Override
 	public void stand(String ntable, String numJoueur) throws RemoteException {
 		this.cn.listTables.get(ntable).partie.stand(numJoueur);
-		//Calcul des gains
+		
+		//Calcul des gains (temporaire)
 		this.cn.listTables.get(ntable).partie.calculGain();
 	}
 
@@ -119,15 +120,17 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	}
 
 	/**
-	 * Demande la main du joueur au serveur pour l'afficher ensuite
+	 * Demande la taille de la main du joueur au serveur pour l'afficher ensuite
+	 * @param ntable
+	 * 			le numero de la table
 	 * @param numJoueur
 	 * 			le numero du joueur
 	 * @return la liste des cartes de la main du joueur
 	 * @throws RemoteException
 	 */
 	@Override
-	public ArrayList<Carte> returnMain(String nbtable, String numJoueur) throws RemoteException {
-		return this.cn.listTables.get(nbtable).partie.lesJoueurs.get(numJoueur).getMain();
+	public int returnTailleMain(String nbtable, String numJoueur) throws RemoteException {
+		return this.cn.listTables.get(nbtable).partie.lesJoueurs.get(numJoueur).getMain().size();
 	}
 
 	/**

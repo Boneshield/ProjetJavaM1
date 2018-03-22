@@ -23,6 +23,7 @@ public class BlackJack {
 	 */
 	public BlackJack() {
 		lesJoueurs = new HashMap<String, Joueur>();
+		enAttente = new LinkedList<Joueur>();
 		Croupier croupier = new Croupier();
 		this.croupier = croupier;
 		this.jeu = new JeuDeCarte();
@@ -48,7 +49,7 @@ public class BlackJack {
 				//Ajout du joueur à la partie
 				this.lesJoueurs.put(numJoueur, new Joueur(numJoueur, srv));
 				this.informJoueurs("Le joueur "+numJoueur+" rejoins la partie");
-				System.out.println("En attente d'autres joueurs");
+				System.out.println("En attente d'autres joueurs (30s)");
 				//Attente de 30 secondes
 				new CountDown(30);
 				this.enCours = true;
@@ -165,7 +166,6 @@ public class BlackJack {
 						try {
 							joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier");
 						} catch (RemoteException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -176,7 +176,6 @@ public class BlackJack {
 						try {
 							joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier");
 						} catch (RemoteException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -188,7 +187,6 @@ public class BlackJack {
 						try {
 							joueur.srv.afficherScore("Vous avez perdu avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier");
 						} catch (RemoteException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -203,7 +201,6 @@ public class BlackJack {
 								try {
 									joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier, BlackJack pour vous");
 								} catch (RemoteException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
 							}
@@ -214,7 +211,6 @@ public class BlackJack {
 								try {
 									joueur.srv.afficherScore("Vous avez perdu avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier, BlackJack pour la banque");
 								} catch (RemoteException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
 							}
@@ -224,7 +220,6 @@ public class BlackJack {
 								try {
 									joueur.srv.afficherScore("Vous avez un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier, Egalite parfaite");
 								} catch (RemoteException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
 							}
@@ -244,7 +239,7 @@ public class BlackJack {
 			joueur.viderMain();
 			//Repasser le stand des joueurs à false
 			joueur.setStand(false);
-			this.informJoueurs("La partie recommence");
+			this.informJoueurs("La partie recommence (20s)");
 		}
 		//Réinitialiser le croupier
 			//Vider sa main
@@ -252,11 +247,19 @@ public class BlackJack {
 			//Repasser son stand à false
 			this.croupier.setStand(false);
 			
+		//Change le statut de la partie
+		this.enCours = false;	
 		//Ajout des joueurs en attente si il y en a
 		while(!this.enAttente.isEmpty()) {
 			this.lesJoueurs.put(this.enAttente.getFirst().getNumJoueur(),this.enAttente.getFirst());
 			this.informJoueurs("Le joueur "+this.enAttente.removeFirst()+" rejoins la partie");
 		}
+		//la partie peut recommencer
+		//Attente de 30 secondes
+		new CountDown(20);
+		this.enCours = true;
+		System.out.println("La partie commence");
+		this.distribuer();
 	}
 	
 	
@@ -266,11 +269,9 @@ public class BlackJack {
 	 * 		Le nom du joueur
 	 */
 	public void afficherMain(String numJoueur) {
-		// TODO Auto-generated method stub
 		try {
 			this.lesJoueurs.get(numJoueur).srv.afficherMainJoueur(numJoueur+" "+this.lesJoueurs.get(numJoueur).afficheMain());
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -297,7 +298,6 @@ public class BlackJack {
 			try {
 				joueur.srv.afficherTexte(info);
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

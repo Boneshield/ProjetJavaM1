@@ -23,8 +23,8 @@ public class Table {
 		this.numTable = numTable;
 		if(taille < 1 || taille > 6) {
 			System.out.println("La taille doit être comprise entre 1 et 6");
-			System.out.println("Mise à 1 par défaut");
-			this.taille = 1;
+			System.out.println("Mise à 6 par défaut");
+			this.taille = 6;
 		}
 		else {
 			this.taille = taille;

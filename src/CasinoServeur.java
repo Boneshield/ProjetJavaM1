@@ -56,13 +56,15 @@ public interface CasinoServeur extends java.rmi.Remote {
 	void quitterTable(String numTable, String numJoueur) throws RemoteException;
 	
 	/**
-	 * Demande la main du joueur au serveur pour l'afficher ensuite
+	 * Demande la taille de la main du joueur au serveur pour l afficher ensuite
+	 * @param ntable
+	 * 			le numero de la table
 	 * @param numJoueur
-	 * 			le numéro du joueur
+	 * 			le numero du joueur
 	 * @return la liste des cartes de la main du joueur
 	 * @throws RemoteException
 	 */
-	ArrayList<Carte> returnMain(String ntable, String numJoueur) throws RemoteException;
+	int returnTailleMain(String ntable, String numJoueur) throws RemoteException;
 	
 	/**
 	 * Demande au croupier de tirer une carte
