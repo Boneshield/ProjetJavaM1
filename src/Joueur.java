@@ -39,10 +39,5 @@ public class Joueur extends Personne{
 	 */
 	public void hit(JeuDeCarte jeu) {
 		super.hit(jeu);
-		try {
-			srv.afficherMainJoueur(this.afficheMain());
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
 	}
 }

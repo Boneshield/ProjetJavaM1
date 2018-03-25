@@ -26,8 +26,10 @@ public interface CasinoServeur extends java.rmi.Remote {
 	 * @param srv
 	 * 		Interface du joueur
 	 * @throws RemoteException
+	 * @return
+	 * 		code de retour pour savoir si la connexion s est bien passee
 	 */
-	 void connexionTable(String numTable, String numJoueur, Client srv) throws RemoteException; 
+	 int connexionTable(String numTable, String numJoueur, Client srv) throws RemoteException; 
 	
 	 /**
 		 * Cree une table pour le joueur
@@ -97,5 +99,11 @@ public interface CasinoServeur extends java.rmi.Remote {
 	 */
 	int score(String ntable, String numJoueur) throws RemoteException;
 	
-	
+	/**
+	 * Liste les tables pour le joueur 
+	 * @param numJoueur
+	 * 			le numero du joueur
+	 * @throws RemoteException
+	 */
+	void listTables(String numJoueur) throws RemoteException;
 }

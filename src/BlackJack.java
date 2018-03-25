@@ -118,6 +118,10 @@ public class BlackJack {
 			this.informJoueurs("Le joueur "+numJoueur+" a ete elimine");
 			System.out.println("Joueur "+numJoueur+" a ete elimine");
 			this.lesJoueurs.remove(numJoueur);
+			//Si c'est le seul joueur en jeu alors la partie recommence avec les joueurs en attente
+			if(this.lesJoueurs.isEmpty()) {
+				this.recommencerPartie();
+			}
 		}
 	}
 	
@@ -235,7 +239,8 @@ public class BlackJack {
 	}
 
 	/**
-	 * Recommence une partie sur avec les joueurs actuellement connectés
+	 * Recommence une partie sur avec les joueurs actuellement connectes
+	 * integre les joueurs en liste d attente
 	 */
 	public void recommencerPartie() {
 		//Réinitialiser tout les joueurs
@@ -256,7 +261,7 @@ public class BlackJack {
 		//Ajout des joueurs en attente si il y en a
 		while(!this.enAttente.isEmpty()) {
 			this.lesJoueurs.put(this.enAttente.getFirst().getNumJoueur(),this.enAttente.getFirst());
-			this.informJoueurs("Le joueur "+this.enAttente.removeFirst()+" rejoins la partie");
+			this.informJoueurs("Le joueur "+this.enAttente.removeFirst().getNumJoueur()+" rejoins la partie");
 		}
 		//la partie peut recommencer
 		//Attente de 10 secondes
@@ -284,7 +289,7 @@ public class BlackJack {
 
 	/**
 	 * Affiche la liste des joueurs
-	 * @return Chaine de caratere faisant la liste des joueurs
+	 * @return Chaine de caractere faisant la liste des joueurs
 	 */
 	public String listJoueur() {
 		String listJoueur = "Joueur :\n";
@@ -295,7 +300,7 @@ public class BlackJack {
 	}
 	
 	/**
-	 * Ecris a tous les joueurs un information
+	 * Ecrit a tous les joueurs un information
 	 * @param info
 	 * 		chaine de caractere designant une info
 	 */
@@ -322,6 +327,19 @@ public class BlackJack {
 			nbjoueur++;
 		}
 		if(nbjoueur == nbstand) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Retourne vrai si une partie est en cours et faux sinon
+	 * @return
+	 */
+	public boolean estEnCours() {
+		if(this.enCours) {
 			return true;
 		}
 		else {

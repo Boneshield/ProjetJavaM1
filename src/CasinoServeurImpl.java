@@ -53,18 +53,31 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	}
 
 	/**
-	 * Connecte le joueur a la table numTable
+	 * Connecte le joueur a la table numTable si il y a de la place
 	 * @param numTable
+	 * 			le numero de la table
 	 * @param numJoueur
+	 * 			le numero du joueur
 	 * @param srv
+	 * 			l interface pour communiquer avec le joueur
 	 * @throws RemoteException
+	 * @return
+	 * 			code de retour pour savoir si la connexion s'est bien passee
 	 */
-	public void connexionTable(String numTable, String numJoueur, Client srv) throws RemoteException {
-		System.out.println("Connexion du joueur : "+numJoueur+" a la table "+numTable);
-		this.cn.listTables.get(numTable).joinTable(numJoueur, srv);
-				
-		//On retire le joueur de la salle d'attente
-		this.cn.salleAttente.remove(numJoueur);
+	public int connexionTable(String numTable, String numJoueur, Client srv) throws RemoteException {
+		if(this.cn.listTables.get(numTable).getNbJoueurCo() >= this.cn.listTables.get(numTable).getTaille()) {
+			this.cn.salleAttente.get(numJoueur).srv.afficherTexte("Cette table est complète");
+			System.out.println("Listing des tables pour "+numJoueur);
+			return 4;
+		}
+		else {
+			System.out.println("Connexion du joueur : "+numJoueur+" a la table "+numTable);
+			this.cn.listTables.get(numTable).joinTable(numJoueur, srv);
+					
+			//On retire le joueur de la salle d'attente
+			this.cn.salleAttente.remove(numJoueur);
+			return 0;
+		}
 	}
 	
 	/**
@@ -75,6 +88,10 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 */
 	public void quitterTable(String numTable, String numJoueur) throws RemoteException {
 		this.cn.listTables.get(numTable).quitTable(numJoueur);
+		if(numTable == numJoueur) {
+			System.out.println("La table "+numTable+" a ete supprimee");
+			this.cn.supprimerTable(numTable);
+		}
 	}
 	
 	
@@ -152,6 +169,16 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 */
 	public int score(String nbtable, String numJoueur) throws RemoteException {
 		return this.cn.listTables.get(nbtable).partie.lesJoueurs.get(numJoueur).calculScore();
+	}
+
+	/**
+	 * Liste les tables pour le joueur 
+	 * @param numJoueur
+	 * 			le numero du joueur
+	 * @throws RemoteException
+	 */
+	public void listTables(String numJoueur) throws RemoteException {
+		this.cn.listeTable(numJoueur);
 	}
 
 }

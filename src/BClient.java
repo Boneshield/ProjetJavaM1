@@ -44,13 +44,14 @@ public class BClient {
 				System.out.println("choisir une table(1) ou bien en créer une(2) ?");
 				
 				do{
-					System.out.println("Entrer 1 ou 2 :");
+					System.out.println("Entrer 1, 2 ou 3(Afficher la liste des tables):");
 					choix = lecture.nextInt();
 					//choix d'une table
 					if(choix == 1) {
 						System.out.println("Veuillez choisir une table : ");
 						//lecture du choix de table du client
 						numTable = lecture.next();
+						choix = cl.connexionTable(numTable,numJoueur, srv);
 					}
 					//Creation d'une table
 					if(choix == 2) {
@@ -60,13 +61,24 @@ public class BClient {
 						taille = lecture.nextInt();
 						cl.creerTable(taille, numTable);
 						System.out.println("Table créée");
+						choix = cl.connexionTable(numTable,numJoueur, srv);
+					}
+					if(choix == 3) {
+						System.out.println("Affichage de la liste des tables");
+						cl.listTables(numJoueur);
+					}
+					if(choix == 4) {
+						choix = 3;
+					}
+					if(choix == 0) {
+						choix = 1;
 					}
 				}while(choix != 1 && choix != 2);
 				
 				//Connexion du joueur au jeu
 				System.out.println("Connecté a la table "+numTable);
 				System.out.println("Vous etes le joueur "+numJoueur);
-				cl.connexionTable(numTable,numJoueur, srv);
+				
 				
 				System.out.println("En attente du serveur");
 
@@ -92,14 +104,16 @@ public class BClient {
 						System.out.println("Table : "+numTable);
 						System.out.println("Il y a "+cl.listJoueur(numTable)+" joueurs");
 						System.out.println(" ");
+						System.out.println("Vous etes le joueur "+numJoueur);
+						System.out.println("Voici votre main");
+						cl.afficherMain(numTable,numJoueur);
 						System.out.println("Affichage du score :");
 						System.out.println(cl.score(numTable,numJoueur));
 						System.out.println(" ");
 						System.out.println("Que voulez vous faire ?");
-						System.out.println("1.Main (Afficher la main du joueur)");
-						System.out.println("2.Hit (Tirer une carte)");
-						System.out.println("3.Stand (Arreter de miser)");
-						System.out.println("4.Quitter la table");
+						System.out.println("1.Hit (Tirer une carte)");
+						System.out.println("2.Stand (Arreter de miser)");
+						System.out.println("3.Quitter la table");
 						System.out.println("choix : ");
 						
 						//lecture du choix du client
@@ -107,13 +121,6 @@ public class BClient {
 					
 						switch(choix) {
 							case 1:
-								//Main
-								System.out.println("Voici votre main");
-								cl.afficherMain(numTable,numJoueur);
-								System.out.println("Affichage du score :");
-								System.out.println(cl.score(numTable,numJoueur));
-								break;
-							case 2:
 								//hit : demande une carte
 								System.out.println("Vous demandez une carte");
 								cl.hit(numTable,numJoueur);
@@ -123,10 +130,11 @@ public class BClient {
 									System.out.println("Vous avez été éliminé");
 									cl.hit(numTable,numJoueur);
 									System.out.println("Vous quittez la table"+numTable);
+									cl.quitterTable(numTable, numJoueur);
 									carteEnMain = false;
 								}
 								break;
-							case 3:
+							case 2:
 								//stand : passe son tour et attends le score
 								System.out.println("Vous decidez de vous arreter");
 								stand = true;
@@ -138,7 +146,7 @@ public class BClient {
 								}
 								
 								break;
-							case 4:
+							case 3:
 								System.out.println("Vous quittez la table"+numTable);
 								cl.quitterTable(numTable, numJoueur);
 								//retour en salle d'attente
@@ -146,7 +154,7 @@ public class BClient {
 								carteEnMain = false;
 								break;
 							default:
-								System.out.println("Le choix doit être 1, 2, 3, ou 4");
+								System.out.println("Le choix doit être 1, 2, ou 3");
 						}
 					}
 					else {

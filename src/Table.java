@@ -24,7 +24,7 @@ public class Table {
 		this.numTable = numTable;
 		if(taille < 1 || taille > 6) {
 			System.out.println("La taille doit être comprise entre 1 et 6");
-			System.out.println("Mise à 6 par défaut");
+			System.out.println("Taille mise à 6 par défaut");
 			this.taille = 6;
 		}
 		else {
@@ -79,8 +79,18 @@ public class Table {
 		this.partie.lesJoueurs.remove(numJoueur);
 		if(numJoueur == this.numTable) {
 			this.partie.informJoueurs("Le créateur de la partie a quitté");
+			if(!this.partie.estEnCours()) {
+				for(Joueur joueur : this.partie.lesJoueurs.values()) {
+					this.partie.lesJoueurs.remove(joueur.getNumJoueur());
+				}
+			}
 		}
 	}
+	
+	public int getNbJoueurCo() {
+		return (this.partie.lesJoueurs.size() + this.partie.enAttente.size());
+	}
+	
 	
 	/**
 	 * Affiche la taille de la table et la liste des joueurs a table
