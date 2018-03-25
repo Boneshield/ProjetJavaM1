@@ -1,8 +1,7 @@
 import 
 java.rmi.RemoteException;
-import java.rmi.server.ObjID;
 import java.util.ArrayList;
-
+//Cette class n'est plus utilisée
 /**
  * Interface permettant au client d'éxécuter des méthodes sur le serveur
  * @author mathieu

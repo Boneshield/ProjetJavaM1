@@ -1,3 +1,4 @@
+import java.rmi.RemoteException;
 
 /**
  * Hebergeur de parties de Black Jack
@@ -68,13 +69,17 @@ public class Table {
 	}
 	
 	/**
-	 * Fait quitter la table a un joueur
+	 * Fait quitter la table a un joueur si c'est le créateur
+	 * de la table on kick tous les autres joueurs
 	 * @param numJoueur
-	 * 		Le nom du joueur 
+	 * 		Le nom du joueur
 	 */
 	public void quitTable(String numJoueur) {
 		System.out.println("Joueur "+numJoueur+" a quitte la table");
 		this.partie.lesJoueurs.remove(numJoueur);
+		if(numJoueur == this.numTable) {
+			this.partie.informJoueurs("Le créateur de la partie a quitté");
+		}
 	}
 	
 	/**

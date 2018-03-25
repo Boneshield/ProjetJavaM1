@@ -1,5 +1,4 @@
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -42,6 +41,11 @@ public class BlackJack {
 			//partie en cours mets le joueur en attente de la fin de la partie
 			System.out.println(numJoueur+" rejoins la file d'attente");
 			this.enAttente.add(new Joueur(numJoueur, srv));
+			try {
+				this.enAttente.getLast().srv.afficherTexte("Une partie est en cours. En attente de fin de la partie");
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		}
 		else {
 			//Lancement du timer d'attente si c'est le premier joueur
@@ -49,11 +53,12 @@ public class BlackJack {
 				//Ajout du joueur à la partie
 				this.lesJoueurs.put(numJoueur, new Joueur(numJoueur, srv));
 				this.informJoueurs("Le joueur "+numJoueur+" rejoins la partie");
-				System.out.println("En attente d'autres joueurs (30s)");
-				//Attente de 30 secondes
-				new CountDown(30);
+				System.out.println("En attente d'autres joueurs (10s)");
+				//Attente de 10 secondes
+				new CountDown(10);
 				this.enCours = true;
 				System.out.println("La partie commence");
+				this.informJoueurs("La partie commence");
 				this.distribuer();
 			}
 			else {
@@ -108,7 +113,6 @@ public class BlackJack {
 			try {
 				this.lesJoueurs.get(numJoueur).srv.afficherMainJoueur("Vous avez été éliminé...vous quittez la table");
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			this.informJoueurs("Le joueur "+numJoueur+" a ete elimine");
@@ -124,11 +128,12 @@ public class BlackJack {
 	 */
 	public void stand(String numJoueur) {
 		//Un joueur s'arrete (ne demande plus de carte)
-		if(this.lesJoueurs.get(numJoueur).isStand() == false)
-		{
-			this.lesJoueurs.get(numJoueur).setStand(true);
-			
+		this.lesJoueurs.get(numJoueur).setStand(true);
+		//Tirage du croupier seulement si tout les joueurs sont stand
+		if(this.allStand() && !this.croupier.isStand()) {
 			this.tirageCroupier();
+			this.calculGain();
+			this.recommencerPartie();
 		}
 	}
 	
@@ -239,7 +244,6 @@ public class BlackJack {
 			joueur.viderMain();
 			//Repasser le stand des joueurs à false
 			joueur.setStand(false);
-			this.informJoueurs("La partie recommence (20s)");
 		}
 		//Réinitialiser le croupier
 			//Vider sa main
@@ -255,8 +259,10 @@ public class BlackJack {
 			this.informJoueurs("Le joueur "+this.enAttente.removeFirst()+" rejoins la partie");
 		}
 		//la partie peut recommencer
-		//Attente de 30 secondes
-		new CountDown(20);
+		//Attente de 10 secondes
+		System.out.println("La partie recommence dans 10s");
+		this.informJoueurs("La partie recommence dans 10s");
+		new CountDown(10);
 		this.enCours = true;
 		System.out.println("La partie commence");
 		this.distribuer();
@@ -300,6 +306,26 @@ public class BlackJack {
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	/**
+	 * Retourne vrai si tout les joueurs sont stand et faux sinon
+	 * @return
+	 */
+	public boolean allStand() {
+		int nbjoueur = 0, nbstand = 0;
+		for(Joueur joueur : this.lesJoueurs.values()) {
+			if(joueur.isStand()) {
+				nbstand++;
+			}
+			nbjoueur++;
+		}
+		if(nbjoueur == nbstand) {
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 }

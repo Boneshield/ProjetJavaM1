@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 /**
  * Classe definissant un croupier du casino

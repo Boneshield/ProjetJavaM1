@@ -1,17 +1,14 @@
-import java.net.MalformedURLException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.server.ObjID;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-
+//Cette class n'est plus utilisée
 /**
  * Implémentation de l'interface permettant au client d'éxécuter des méthodes sur le serveur
  * @author mathieu
  *
  */
 
+@SuppressWarnings("serial")
 public class ServeurImpl extends UnicastRemoteObject implements Serveur {
 
 	BlackJack bj;
@@ -39,7 +36,6 @@ public class ServeurImpl extends UnicastRemoteObject implements Serveur {
 	 */
 	@Override
 	public void connexion(String numJoueur, Client srv) throws RemoteException {
-		// TODO Auto-generated method stub
 			System.out.println("Connexion de "+srv);
 			this.bj.creerJoueur(numJoueur, srv);
 			System.out.println("Creation du joueur : "+numJoueur);
@@ -55,7 +51,6 @@ public class ServeurImpl extends UnicastRemoteObject implements Serveur {
 	 */
 	@Override
 	public void hit(String numJoueur) throws RemoteException {
-		// TODO Auto-generated method stub
 		if(this.bj.lesJoueurs.get(numJoueur).EstElimine()) {
 			this.bj.elimination(numJoueur);
 		}
@@ -73,7 +68,6 @@ public class ServeurImpl extends UnicastRemoteObject implements Serveur {
 	 */
 	@Override
 	public void stand(String numJoueur) throws RemoteException {
-		// TODO Auto-generated method stub
 		this.bj.stand(numJoueur);
 		//Tirage du croupier
 		this.bj.tirageCroupier();
@@ -89,7 +83,6 @@ public class ServeurImpl extends UnicastRemoteObject implements Serveur {
 	 */
 	@Override
 	public void afficherMain(String numJoueur) throws RemoteException {
-		// TODO Auto-generated method stub
 		this.bj.afficherMain(numJoueur);
 	}
 
@@ -102,7 +95,6 @@ public class ServeurImpl extends UnicastRemoteObject implements Serveur {
 	 */
 	@Override
 	public ArrayList<Carte> returnMain(String numJoueur) throws RemoteException {
-		// TODO Auto-generated method stub
 		return this.bj.lesJoueurs.get(numJoueur).getMain();
 	}
 
@@ -113,7 +105,6 @@ public class ServeurImpl extends UnicastRemoteObject implements Serveur {
 	 */
 	@Override
 	public int listJoueur() throws RemoteException {
-		// TODO Auto-generated method stub
 		return this.bj.lesJoueurs.size();
 	}
 	
@@ -138,7 +129,6 @@ public class ServeurImpl extends UnicastRemoteObject implements Serveur {
 	 */
 	@Override
 	public void tablationJoueur(String numJoueur, Client srv) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -147,7 +137,6 @@ public class ServeurImpl extends UnicastRemoteObject implements Serveur {
 	 */
 	@Override
 	public void afficherListTable() {
-		// TODO Auto-generated method stub
 		
 	}
 	

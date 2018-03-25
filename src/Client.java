@@ -1,5 +1,4 @@
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
 /**
  * Interface pour que le serveur affiche des informations au client

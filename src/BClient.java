@@ -2,7 +2,6 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 import java.util.Scanner;
 
 /**
@@ -24,7 +23,7 @@ public class BClient {
 			CasinoServeur cl = (CasinoServeur) Naming.lookup("rmi://localhost/BlackJack");
 			String numJoueur = null, numTable = null;
 			int choix = 0, taille = 0;
-			boolean stand = false, statut = false;
+			boolean stand = false, statut = false, carteEnMain = false;
 						
 			//Création interface client pour le serveur
 			ClientImpl srv = new ClientImpl();
@@ -70,25 +69,31 @@ public class BClient {
 				cl.connexionTable(numTable,numJoueur, srv);
 				
 				System.out.println("En attente du serveur");
+
 				//Si le joueur est en dans la file d'attente, on doit attendre
 				//Tant qu'il n'a pas de carte dans sa main, il attend le serveur
-				while(cl.returnTailleMain(numTable, numJoueur) == -1 || cl.returnTailleMain(numTable, numJoueur) == 0) {
-					//tantque partiecommencée != 1
-					//try
-					//cl.returnTailleMain
-					//catch
-					//ignore l'erreur
+				while(!carteEnMain) {
+					try {
+						if(cl.returnTailleMain(numTable, numJoueur) != 0 || cl.listJoueur(numTable) == 0) {
+							carteEnMain = true;
+							break;
+						}
+					}
+					catch (Exception e) {
+						//ignore l'erreur
+					}
 				}
 				
-				System.out.println("Affichage du score :");
-				System.out.println(cl.score(numTable,numJoueur));
-				
 				//Boucle de partie
-				while(true){
+				while(carteEnMain){
+					//Stand permet de savoir si on affiche le menu ou si on est en fin de partie
 					if(!stand) {
 						System.out.println("******* MENU *******");
 						System.out.println("Table : "+numTable);
 						System.out.println("Il y a "+cl.listJoueur(numTable)+" joueurs");
+						System.out.println(" ");
+						System.out.println("Affichage du score :");
+						System.out.println(cl.score(numTable,numJoueur));
 						System.out.println(" ");
 						System.out.println("Que voulez vous faire ?");
 						System.out.println("1.Main (Afficher la main du joueur)");
@@ -117,6 +122,8 @@ public class BClient {
 								if(cl.score(numTable,numJoueur) > 21) {
 									System.out.println("Vous avez été éliminé");
 									cl.hit(numTable,numJoueur);
+									System.out.println("Vous quittez la table"+numTable);
+									carteEnMain = false;
 								}
 								break;
 							case 3:
@@ -124,12 +131,19 @@ public class BClient {
 								System.out.println("Vous decidez de vous arreter");
 								stand = true;
 								cl.stand(numTable,numJoueur);
+								//Attente des autres joueurs si il y en a
+								if(cl.listJoueur(numTable) > 1) {
+									System.out.println("Attente des autres joueurs");
+									
+								}
+								
 								break;
 							case 4:
 								System.out.println("Vous quittez la table"+numTable);
 								cl.quitterTable(numTable, numJoueur);
 								//retour en salle d'attente
 								statut = true;
+								carteEnMain = false;
 								break;
 							default:
 								System.out.println("Le choix doit être 1, 2, 3, ou 4");
@@ -143,11 +157,14 @@ public class BClient {
 						if(choix == 1) {
 							//recommencer partie
 							stand = false;
+							//attente que la partie recommence
+							new CountDown(10);
 						}
 						else if(choix == 2) {
 							//quitter table
 							System.out.println("Vous quittez la table "+numTable);
 							cl.quitterTable(numTable, numJoueur);
+							carteEnMain = false;
 							break;
 						}
 					}
@@ -158,15 +175,11 @@ public class BClient {
 				stand = false;
 				statut = false;
 			}
-			
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

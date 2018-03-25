@@ -1,5 +1,4 @@
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
 /**
  * Classe qui defini un joueur par son nom, sa main qui est une liste de carte, son etat stand et son interface pour le serveur

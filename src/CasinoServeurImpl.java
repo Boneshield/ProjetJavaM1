@@ -1,12 +1,12 @@
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 
 /**
  * Implémentation des méthodes distantes du casino
  * @author mathieu
  * @see Casino, CasinoServeur
  */
+@SuppressWarnings("serial")
 public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServeur {
 
 	private Casino cn;
@@ -105,7 +105,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 		this.cn.listTables.get(ntable).partie.stand(numJoueur);
 		
 		//Calcul des gains (temporaire)
-		this.cn.listTables.get(ntable).partie.calculGain();
+		//this.cn.listTables.get(ntable).partie.calculGain();
 	}
 
 	/**

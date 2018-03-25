@@ -1,7 +1,5 @@
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-
 
 /**
  * Implémentation de l'interface pour que le serveur affiche des informations au client
@@ -9,6 +7,7 @@ import java.util.ArrayList;
  * 
  */
 
+@SuppressWarnings("serial")
 public class ClientImpl extends UnicastRemoteObject implements Client {
 	
 	/**
