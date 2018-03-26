@@ -3,11 +3,12 @@ import java.util.ArrayList;
 /**
  * Paquet de carte contenant des cartes : arraylist de carte
  * @author mathieu
+ * 
  * @see Carte
  */
 public class JeuDeCarte {
-	//un jeu de carte dispose de 52 cartes
-	private ArrayList<Carte> jeu;
+	
+	private ArrayList<Carte> jeu;			//un jeu de carte dispose de 52 cartes
 	
 	/**
 	 * Constructeur :

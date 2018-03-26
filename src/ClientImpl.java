@@ -5,6 +5,7 @@ import java.rmi.server.UnicastRemoteObject;
  * Implémentation de l'interface pour que le serveur affiche des informations au client
  * @author mathieu
  * 
+ * @see Client
  */
 
 @SuppressWarnings("serial")
@@ -18,7 +19,6 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 	protected ClientImpl() throws RemoteException {
 		super();
 	}
-	
 	
 	/**
 	 * Affiche la main du client chez le client

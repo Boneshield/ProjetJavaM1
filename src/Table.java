@@ -4,7 +4,10 @@ import java.rmi.RemoteException;
  * Hebergeur de parties de Black Jack
  * Il y a 1 a 6 joueurs a une table
  * @author mathieu
- * @see BlackJack,Joueur
+ * 
+ * @see BlackJack
+ * @see Joueur
+ * @see Croupier
  */
 
 public class Table {
@@ -58,6 +61,13 @@ public class Table {
 	 * 		Le nom du joueur
 	 */			
 	public void joinTable(String numJoueur, Client srv) {
+		//Connexion du joueur au jeu
+		try {
+			srv.afficherTexte("Connecté a la table "+this.numTable);
+			srv.afficherTexte("Vous etes le joueur "+numJoueur);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		this.partie.creerJoueur(numJoueur, srv);
 	}
 	
@@ -78,8 +88,17 @@ public class Table {
 				}
 			}
 		}
+		//Si la table est vide alors on stoppe la partie
+		if(this.partie.lesJoueurs.isEmpty() && this.partie.enAttente.isEmpty()) {
+			System.out.println("Table vide arrêt de la partie");
+			this.partie = new BlackJack();
+		}
 	}
 	
+	/**
+	 * Retourne le nombre de joueur connecte a la partie
+	 * @return le nombre de joueur en cours de partie et en attente aussi
+	 */
 	public int getNbJoueurCo() {
 		return (this.partie.lesJoueurs.size() + this.partie.enAttente.size());
 	}

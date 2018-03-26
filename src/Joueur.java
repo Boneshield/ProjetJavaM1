@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
  * Classe qui defini un joueur par son nom, sa main qui est une liste de carte, son etat stand et son interface pour le serveur
  * @author mathieu
  *
+ * @see Personne
  */
 
 public class Joueur extends Personne{

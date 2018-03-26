@@ -52,7 +52,7 @@ public class BlackJack {
 			if(this.lesJoueurs.isEmpty()) {
 				//Ajout du joueur à la partie
 				this.lesJoueurs.put(numJoueur, new Joueur(numJoueur, srv));
-				this.informJoueurs("Le joueur "+numJoueur+" rejoins la partie");
+				this.informJoueurs("Le joueur "+numJoueur+" rejoins la partie\nelle commence dans 10s");
 				System.out.println("En attente d'autres joueurs (10s)");
 				//Attente de 10 secondes
 				new CountDown(10);

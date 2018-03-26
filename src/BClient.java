@@ -34,10 +34,11 @@ public class BClient {
 			boolean carteEnMain = false;	//Indicateur si le joueur a des cartes dans sa main
 			Scanner lecture;				//Lecteur des saisies du joueur
 			
-			//Création interface client pour le serveur
+			//Création de l'interface client pour le serveur
 			ClientImpl srv = new ClientImpl();
 			System.out.println("BlackJack version client 4");
 			
+			//Saisie du nom du joueur avec vérification de la chaine de caractère
 			lecture = new Scanner(System.in);
 			do {
 				//lecture du nom/pseudo/numéro du client
@@ -63,50 +64,68 @@ public class BClient {
 						choix = 3;
 						lecture.nextLine();
 					}
-					//choix d'une table
-					if(choix == 1) {
-						do {
-							System.out.println("Veuillez choisir une table : ");
-							//lecture du choix de table du client
-							numTable = lecture.next();
-						}while(!Pattern.matches("[0-9a-zA-Z]*", numTable));
-						
-						choix = cl.connexionTable(numTable,numJoueur, srv);
-					}
-					//Creation d'une table
-					if(choix == 2) {
-						System.out.println("Creation table");
-						numTable = numJoueur;
-						do {
-							System.out.println("Veuillez entrer la taille de la table :");
-							try {
-								taille = lecture.nextInt();
-							} catch (InputMismatchException e) {
-								System.out.println("Taille incorrecte");
-								lecture.nextLine();
+					//Choix/Création/Affichage d'une table
+					switch(choix) {
+						case 1:
+							//Choix d'une table
+							do {
+								System.out.println("Veuillez choisir une table : ");
+								//lecture du choix de table du client
+								numTable = lecture.next();
+							}while(!Pattern.matches("[0-9a-zA-Z]*", numTable));
+							//Connexion du joueur à la table choisie
+							choix = cl.connexionTable(numTable,numJoueur, srv);
+							if(choix == 4) {
+								//Table pleine
+								System.out.println("La table est complète !");
+								choix = 3;
 							}
-						}while(taille >= 1 && taille <= 6);
-						
-						cl.creerTable(taille, numTable);
-						System.out.println("Table créée");
-						choix = cl.connexionTable(numTable,numJoueur, srv);
+							if(choix == 5) {
+								//Table inexistante
+								System.out.println("La table n'existe pas !");
+								choix = 3;
+							}
+							break;
+						case 2:
+							//Creation d'une table
+								System.out.println("Creation table");
+								do {
+									System.out.println("Veuillez entrer la taille de la table :");
+									try {
+										taille = lecture.nextInt();
+									} catch (InputMismatchException e) {
+										System.out.println("Taille incorrecte !");
+										lecture.nextLine();
+									}
+								}while(taille < 1 || taille > 6);
+								numTable = numJoueur;
+								cl.creerTable(taille, numTable);
+								System.out.println("Table créée");
+								//Connexion du joueur à sa propre table
+								choix = cl.connexionTable(numTable,numJoueur, srv);
+								if(choix == 4) {
+									//Table pleine
+									System.out.println("La table est complète !");
+									choix = 3;
+								}
+								if(choix == 5) {
+									//Table inexistante
+									System.out.println("La table n'existe pas !");
+									choix = 3;
+								}
+							break;
+						case 3:
+							//Affichage des tables
+							System.out.println("Affichage de la liste des tables");
+							cl.listTables(numJoueur);
+							break;
+						default:
+							//Erreur
+							System.out.println("Ce choix n'est pas possible");
+							choix = 3;
+							break;
 					}
-					if(choix == 3) {
-						System.out.println("Affichage de la liste des tables");
-						cl.listTables(numJoueur);
-					}
-					if(choix == 4) {
-						choix = 3;
-					}
-					if(choix == 0) {
-						choix = 1;
-					}
-				}while(choix != 1 && choix != 2);
-				
-				//Connexion du joueur au jeu
-				System.out.println("Connecté a la table "+numTable);
-				System.out.println("Vous etes le joueur "+numJoueur);
-				
+				}while(choix != 0);
 				
 				System.out.println("En attente du serveur");
 
@@ -152,6 +171,8 @@ public class BClient {
 								//hit : demande une carte
 								System.out.println("Vous demandez une carte");
 								cl.hit(numTable,numJoueur);
+								System.out.println("Voici votre main");
+								cl.afficherMain(numTable,numJoueur);
 								System.out.println("Affichage du score :");
 								System.out.println(cl.score(numTable,numJoueur));
 								if(cl.score(numTable,numJoueur) > 21) {
@@ -170,9 +191,7 @@ public class BClient {
 								//Attente des autres joueurs si il y en a
 								if(cl.listJoueur(numTable) > 1) {
 									System.out.println("Attente des autres joueurs");
-									
 								}
-								
 								break;
 							case 3:
 								System.out.println("Vous quittez la table"+numTable);
@@ -187,6 +206,7 @@ public class BClient {
 					}
 					else {
 						//Si stand = true on recommence la partie ou on quitte la table
+						new CountDown(3);
 						System.out.println("Fin de partie voulez vous recommencer ? (oui(1) non(2)) :");
 						//lecture du choix du client
 						choix = lecture.nextInt();

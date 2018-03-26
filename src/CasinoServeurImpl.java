@@ -4,7 +4,9 @@ import java.rmi.server.UnicastRemoteObject;
 /**
  * Implémentation des méthodes distantes du casino
  * @author mathieu
- * @see Casino, CasinoServeur
+ * 
+ * @see Casino
+ * @see CasinoServeur
  */
 @SuppressWarnings("serial")
 public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServeur {
@@ -32,8 +34,19 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * 		chaine de caractere definissant nom du joueur
 	 */
 	public void creerTable(int taille, String nomJoueur) {
-		this.cn.creerTable(nomJoueur, taille);
-		System.out.println("Creation table par "+nomJoueur);
+		//Si la table existe déjà
+		if(this.cn.isTable(nomJoueur)) {
+			try {
+				this.cn.salleAttente.get(nomJoueur).srv.afficherTexte("La table existe déjà");
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			this.cn.creerTable(nomJoueur, taille);
+			System.out.println("Creation table par "+nomJoueur);
+		}
+		
 	}
 	
 	/**
@@ -67,18 +80,15 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	public int connexionTable(String numTable, String numJoueur, Client srv) throws RemoteException {
 		//Si la table n'existe pas
 		if(!this.cn.isTable(numTable)) {
-			return 2;
+			return 5;
 		}
 		//Si la table est complète
 		if(this.cn.listTables.get(numTable).getNbJoueurCo() >= this.cn.listTables.get(numTable).getTaille()) {
-			this.cn.salleAttente.get(numJoueur).srv.afficherTexte("Cette table est complète");
-			System.out.println("Listing des tables pour "+numJoueur);
-			return 1;
+			return 4;
 		}
 		else {
 			System.out.println("Connexion du joueur : "+numJoueur+" a la table "+numTable);
 			this.cn.listTables.get(numTable).joinTable(numJoueur, srv);
-					
 			//On retire le joueur de la salle d'attente
 			this.cn.salleAttente.remove(numJoueur);
 			return 0;
@@ -93,7 +103,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 */
 	public void quitterTable(String numTable, String numJoueur) throws RemoteException {
 		this.cn.listTables.get(numTable).quitTable(numJoueur);
-		if(numTable == numJoueur) {
+		if(numTable.equals(numJoueur)) {
 			System.out.println("La table "+numTable+" a ete supprimee");
 			this.cn.supprimerTable(numTable);
 		}
@@ -125,9 +135,6 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	@Override
 	public void stand(String ntable, String numJoueur) throws RemoteException {
 		this.cn.listTables.get(ntable).partie.stand(numJoueur);
-		
-		//Calcul des gains (temporaire)
-		//this.cn.listTables.get(ntable).partie.calculGain();
 	}
 
 	/**

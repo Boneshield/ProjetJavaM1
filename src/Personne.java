@@ -1,5 +1,13 @@
 import java.util.ArrayList;
 
+/**
+ * Classe abstraite désignant une personne
+ * Ce sera soit un joueur, soit un croupier  
+ * @author mathieu
+ *
+ * @see Croupier
+ * @see Joueur
+ */
 public abstract class Personne {
 
 	private ArrayList<Carte> main;
@@ -18,7 +26,7 @@ public abstract class Personne {
 	}
 	
 	/**
-	 * Construit les cartes de la main du joueur (sur le serveur) en chaine de caractere
+	 * Construit une liste des cartes de la main du joueur (sur le serveur) en chaine de caractere
 	 * @return une chaine de caractere qui est une liste des cartes du joueur
 	 */
 	public String afficheMain() {
@@ -44,7 +52,9 @@ public abstract class Personne {
 	/**
 	 * Hit : tire une carte pour ce joueur depuis le jeu de carte
 	 * Affiche la nouvelle main au joueur
+	 * 
 	 * @see JeuDeCarte
+	 * @see BlackJack
 	 */
 	public void hit(JeuDeCarte jeu) {
 		Carte carte = jeu.TireCarte();

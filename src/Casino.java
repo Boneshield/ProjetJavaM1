@@ -4,6 +4,7 @@ import java.util.HashMap;
 /**
  * Hebergeur de tables, peut creer des tables et des croupiers ainsi que les supprimer
  * @author mathieu
+ * 
  * @see Table
  */
 
@@ -52,13 +53,6 @@ public class Casino {
 	}
 	
 	/**
-	 * Licencie le croupier (supprime le croupier)
-	 */
-	public void licencierCroupier(Croupier croupier) {
-		
-	}
-	
-	/**
 	 * Ajoute le joueur dans la salle d'attente
 	 * @param numJoueur
 	 * 		Chaine de caractere designant le nom du joueur
@@ -89,11 +83,11 @@ public class Casino {
 	 * @return
 	 */
 	public boolean isTable(String numTable) {
-		for(Table table : this.listTables.values()) {
-			if(table.getNum() == numTable) {
-				return true;
-			}
+		if(this.listTables.containsKey(numTable)) {
+			return true;
 		}
-		return false;
+		else {
+			return false;
+		}
 	}
 }

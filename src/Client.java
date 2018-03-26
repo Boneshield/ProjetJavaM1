@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
  * Interface pour que le serveur affiche des informations au client
  * @author mathieu
  * 
+ * @see ClientImpl
  */
 
 public interface Client extends java.rmi.Remote {

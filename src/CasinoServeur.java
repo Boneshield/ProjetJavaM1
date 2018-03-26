@@ -3,6 +3,7 @@ import java.rmi.RemoteException;
 /**
  * Interface pour executer les commandes du casino
  * @author mathieu
+ * 
  * @see CasinoServeurImpl
  */
 public interface CasinoServeur extends java.rmi.Remote {
