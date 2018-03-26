@@ -22,11 +22,11 @@ public class BServeur {
 		CasinoServeurImpl ci;
 		Casino cn = new Casino();
 		//Création tables permanentes
-			cn.creerTable("Casino1", 2);
-			cn.creerTable("Casino2", 3);
-			cn.creerTable("Casino3", 4);
-			cn.creerTable("Casino4", 5);
-			cn.creerTable("Casino5", 6);
+			cn.creerTable("Casino1", 2, 10, 100);
+			cn.creerTable("Casino2", 3, 20, 200);
+			cn.creerTable("Casino3", 4, 30, 150);
+			cn.creerTable("Casino4", 5, 10, 150);
+			cn.creerTable("Casino5", 6, 20, 100);
 		try {
 			ci = new CasinoServeurImpl(cn);
 			try {
@@ -44,7 +44,7 @@ public class BServeur {
 					@SuppressWarnings("unused")
 					CasinoServeur cl = (CasinoServeur) Naming.lookup("rmi://localhost/BlackJack");
 					//attente des joueurs
-					System.out.println("BlackJack Serveur V3");
+					System.out.println("BlackJack Serveur V4");
 					System.out.println("*****************");
 					System.out.println("attente de joueur");
 				

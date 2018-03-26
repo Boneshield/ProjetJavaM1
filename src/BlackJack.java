@@ -57,8 +57,9 @@ public class BlackJack {
 				//Attente de 10 secondes
 				new CountDown(10);
 				this.enCours = true;
-				System.out.println("La partie commence");
-				this.informJoueurs("La partie commence");
+				System.out.println("La partie commence !");
+				this.informJoueurs("La partie commence !");
+				this.informJoueurs("C'est l'heure des mises !");
 				this.distribuer();
 			}
 			else {
@@ -85,6 +86,7 @@ public class BlackJack {
 		System.out.println("tirage du croupier");
 		//Tirage du croupier
 		this.croupier.hit(jeu);
+		this.informJoueurs("Le croupier a pioché :"+this.croupier.afficheMain());
 		this.croupier.hit(jeu);
 	}
 	

@@ -28,7 +28,9 @@ public class BClient {
 			String numJoueur = null;		//Numéro du joueur (son nom)
 			String numTable = null;			//Numéro de la table (son nom)
 			int choix = 0;					//Indicateur du choix du client
-			int taille = 0;					//taille de la table si le joueur crée une table
+			int taille = 0;					//Taille de la table si le joueur crée une table
+			int miseMinimale = 0;			//Mise minimale de la table créée par le joueur
+			int miseMaximale = 0;			//Mise maximale de la table créée par le joueur
 			boolean stand = false;			//Indicateur si le joueur est stand ou non
 			boolean statut = false;			//Indicateur si le joueur quitte la table ou non
 			boolean carteEnMain = false;	//Indicateur si le joueur a des cartes dans sa main
@@ -89,6 +91,7 @@ public class BClient {
 						case 2:
 							//Creation d'une table
 								System.out.println("Creation table");
+								//Saisie de la taille table
 								do {
 									System.out.println("Veuillez entrer la taille de la table :");
 									try {
@@ -98,8 +101,40 @@ public class BClient {
 										lecture.nextLine();
 									}
 								}while(taille < 1 || taille > 6);
+								//Saisie de la mise minimale de la table
+								do {
+									System.out.println("Veuillez entrer la mise minimale de la table :(1 jeton mimimum)");
+									try {
+										miseMinimale = lecture.nextInt();
+									} catch (InputMismatchException e) {
+										System.out.println("Mise incorrecte !");
+										lecture.nextLine();
+									}
+									//Informations sur l'erreur de la saisie de la mise
+									if(miseMinimale < 1 || miseMinimale > 200) {
+										System.out.println("La mise doit être entre 1 et 200 jetons !");
+									}
+								}while(miseMinimale < 1 || miseMinimale > 200);
+								//Saisie de la mise maximale de la table
+								do {
+									System.out.println("Veuillez entrer la mise maximale de la table :(200 jetons maximum)");
+									try {
+										miseMaximale = lecture.nextInt();
+									} catch (InputMismatchException e) {
+										System.out.println("Mise incorrecte !");
+										lecture.nextLine();
+									}
+									//Informations sur l'erreur de la saisie de la mise
+									if(miseMinimale < 1 || miseMinimale > 200) {
+										System.out.println("La mise doit être entre 1 et 200 jetons !");
+									}
+									if(miseMaximale < miseMinimale) {
+										System.out.println("La mise maximale ne peut pas être plus petite que la mise minimale !");
+									}
+								}while(miseMaximale < 1 || miseMaximale > 200 || miseMinimale > miseMaximale);
 								numTable = numJoueur;
-								cl.creerTable(taille, numTable);
+								
+								cl.creerTable(numTable, taille, miseMinimale, miseMaximale);
 								System.out.println("Table créée");
 								//Connexion du joueur à sa propre table
 								choix = cl.connexionTable(numTable,numJoueur, srv);

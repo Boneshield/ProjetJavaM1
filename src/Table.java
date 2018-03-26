@@ -14,6 +14,8 @@ public class Table {
 	protected BlackJack partie;
 	private String numTable;
 	private int taille;
+	private int miseMinimale;
+	private int miseMaximale;
 	private Croupier croupier;
 	
 	/**
@@ -22,10 +24,12 @@ public class Table {
 	 * @param taille
 	 * 		Entier definissant le nombre de joueur a la table
 	 */
-	public Table(String numTable, int taille) {
+	public Table(String numTable, int taille, int miseMinimale, int miseMaximale) {
 		this.partie = new BlackJack();
 		this.numTable = numTable;
 		this.taille = taille;
+		this.miseMinimale = miseMinimale;
+		this.miseMaximale = miseMaximale;
 	}
 	
 	/**
@@ -44,6 +48,22 @@ public class Table {
 	 */
 	public int getTaille() {
 		return this.taille;
+	}
+	
+	/**
+	 * Retourne la mise minimale pour jouer a la table
+	 * @return mise
+	 */
+	public int getMiseMinimale() {
+		return this.miseMinimale;
+	}
+	
+	/**
+	 * Retourne la mise maximale pour jouer a la table
+	 * @return mise
+	 */
+	public int getMiseMaximale() {
+		return this.miseMaximale;
 	}
 	
 	/**
@@ -109,7 +129,7 @@ public class Table {
 	 * @return Chaine de caratere affichant les infos de la table 
 	 */
 	public String toString() {
-		return (this.partie.lesJoueurs.size()+"/"+this.taille);
+		return ("Joueurs : "+this.partie.lesJoueurs.size()+"/"+this.taille+" mise : "+this.miseMinimale+"-"+this.miseMaximale);
 	}
 }
 

@@ -32,10 +32,14 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * 		taille entier de 1 a 6
 	 * @param nomJoueur
 	 * 		chaine de caractere definissant nom du joueur
+	 * @param miseMinimale
+	 * 		mise minimale que l on peut miser a cette table
+	 * @param miseMaximale
+	 * 		mise maximale que l on peut miser a cette table
 	 */
-	public void creerTable(int taille, String nomJoueur) {
+	public void creerTable(String nomJoueur, int taille, int miseMinimale, int miseMaximale) {
 		//Si la table existe déjà
-		if(this.cn.isTable(nomJoueur)) {
+		if(this.cn.existeTable(nomJoueur)) {
 			try {
 				this.cn.salleAttente.get(nomJoueur).srv.afficherTexte("La table existe déjà");
 			} catch (RemoteException e) {
@@ -43,7 +47,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 			}
 		}
 		else {
-			this.cn.creerTable(nomJoueur, taille);
+			this.cn.creerTable(nomJoueur, taille, miseMinimale, miseMaximale);
 			System.out.println("Creation table par "+nomJoueur);
 		}
 		
@@ -57,7 +61,6 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * 			l'interface pour communiquer avec ce joueur
 	 * @throws RemoteException
 	 */
-	@Override
 	public void connexion(String numJoueur, Client srv) throws RemoteException {
 			System.out.println("Connexion de "+numJoueur);
 			this.cn.arriveJoueur(numJoueur, srv);
@@ -79,7 +82,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 */
 	public int connexionTable(String numTable, String numJoueur, Client srv) throws RemoteException {
 		//Si la table n'existe pas
-		if(!this.cn.isTable(numTable)) {
+		if(!this.cn.existeTable(numTable)) {
 			return 5;
 		}
 		//Si la table est complète
@@ -116,7 +119,6 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * 			le numero du joueur
 	 * @throws RemoteException
 	 */
-	@Override
 	public void hit(String numTable, String numJoueur) throws RemoteException {
 		if(this.cn.listTables.get(numTable).partie.lesJoueurs.get(numJoueur).EstElimine()) {
 			this.cn.listTables.get(numTable).partie.elimination(numJoueur);
@@ -132,9 +134,8 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * 			le numero du joueur
 	 * @throws RemoteException
 	 */
-	@Override
-	public void stand(String ntable, String numJoueur) throws RemoteException {
-		this.cn.listTables.get(ntable).partie.stand(numJoueur);
+	public void stand(String numTable, String numJoueur) throws RemoteException {
+		this.cn.listTables.get(numTable).partie.stand(numJoueur);
 	}
 
 	/**
@@ -143,9 +144,8 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * 			le numero du joueur
 	 * @throws RemoteException
 	 */
-	@Override
-	public void afficherMain(String nbtable, String numJoueur) throws RemoteException {
-		this.cn.listTables.get(nbtable).partie.afficherMain(numJoueur);
+	public void afficherMain(String numTable, String numJoueur) throws RemoteException {
+		this.cn.listTables.get(numTable).partie.afficherMain(numJoueur);
 	}
 
 	/**
@@ -157,9 +157,8 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * @return la liste des cartes de la main du joueur
 	 * @throws RemoteException
 	 */
-	@Override
-	public int returnTailleMain(String nbtable, String numJoueur) throws RemoteException {
-		return this.cn.listTables.get(nbtable).partie.lesJoueurs.get(numJoueur).getMain().size();
+	public int returnTailleMain(String numTable, String numJoueur) throws RemoteException {
+		return this.cn.listTables.get(numTable).partie.lesJoueurs.get(numJoueur).getMain().size();
 	}
 
 	/**
@@ -167,9 +166,8 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * @return le nombre de joueur : type entier
 	 * @throws RemoteException
 	 */
-	@Override
-	public int listJoueur(String nbtable) throws RemoteException {
-		return this.cn.listTables.get(nbtable).partie.lesJoueurs.size();
+	public int listJoueur(String numTable) throws RemoteException {
+		return this.cn.listTables.get(numTable).partie.lesJoueurs.size();
 	}
 	
 	/**
@@ -179,8 +177,8 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * @return donne le resulat de la manche
 	 * @throws RemoteException
 	 */
-	public int score(String nbtable, String numJoueur) throws RemoteException {
-		return this.cn.listTables.get(nbtable).partie.lesJoueurs.get(numJoueur).calculScore();
+	public int score(String numTable, String numJoueur) throws RemoteException {
+		return this.cn.listTables.get(numTable).partie.lesJoueurs.get(numJoueur).calculScore();
 	}
 
 	/**
@@ -193,4 +191,40 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 		this.cn.listeTable(numJoueur);
 	}
 
+	/**
+	 * Affiche le solde disponible en jeton sur le compte du joueur
+	 * @param numJoueur
+	 * 		le numero du joueur
+	 * @throws RemoteException
+	 */
+	public int consulterSolde(String numJoueur) throws RemoteException {
+		return this.cn.gestionMises.getSolde(numJoueur);
+	}
+
+	/**
+	 * Le joueur mise un montant en jetons
+	 * @param numJoueur
+	 * 		le numero du joueur
+	 * @param mise
+	 * 		le nombre de jetons mises
+	 * @throws RemoteException
+	 */
+	public void miser(String numTable, String numJoueur, int mise) throws RemoteException {
+		this.cn.gestionMises.miser(numJoueur, mise);
+	}
+
+	/**
+	 * Ajoute une somme en jetons sur le compte du joueur
+	 * @param numJoueur
+	 * 		le numero du joueur
+	 * @param mise
+	 * 		le nombre de jetons ajoutes au compte 
+	 * @throws RemoteException
+	 */
+	public void crediter(String numJoueur, int mise) throws RemoteException {
+		this.cn.gestionMises.ajoutCredit(numJoueur, mise);
+	}
+
+	
+	
 }

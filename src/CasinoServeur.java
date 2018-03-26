@@ -38,8 +38,12 @@ public interface CasinoServeur extends java.rmi.Remote {
 		 * 		taille entier de 1 a 6
 		 * @param nomJoueur
 		 * 		chaine de caractere definissant nom du joueur
+		 * @param miseMinimale
+		 * 		mise minimale que l on peut miser a cette table
+		 * @param miseMaximale
+		 * 		mise maximale que l on peut miser a cette table
 		 */
-	void creerTable(int taille, String nomJoueur) throws RemoteException;
+	void creerTable(String nomJoueur, int taille, int miseMinimale, int miseMaximale) throws RemoteException;
 	 
 	/**
 	 * Affiche la main du joueur
@@ -47,7 +51,7 @@ public interface CasinoServeur extends java.rmi.Remote {
 	 * 			le numéro du joueur
 	 * @throws RemoteException
 	 */
-	void afficherMain(String ntable, String numJoueur) throws RemoteException;
+	void afficherMain(String numTable, String numJoueur) throws RemoteException;
 	
 	/**
 	 * Fait quitter la table au joueur
@@ -66,7 +70,7 @@ public interface CasinoServeur extends java.rmi.Remote {
 	 * @return la liste des cartes de la main du joueur
 	 * @throws RemoteException
 	 */
-	int returnTailleMain(String ntable, String numJoueur) throws RemoteException;
+	int returnTailleMain(String numTable, String numJoueur) throws RemoteException;
 	
 	/**
 	 * Demande au croupier de tirer une carte
@@ -74,7 +78,7 @@ public interface CasinoServeur extends java.rmi.Remote {
 	 * 			le numéro du joueur
 	 * @throws RemoteException
 	 */
-	void hit(String ntable, String numJoueur) throws RemoteException;
+	void hit(String numTable, String numJoueur) throws RemoteException;
 	
 	/**
 	 * S'arrete pour la manche actuelle : ne demande plus de carte et attends le score final
@@ -82,14 +86,14 @@ public interface CasinoServeur extends java.rmi.Remote {
 	 * 			le numéro du joueur
 	 * @throws RemoteException
 	 */
-	void stand(String ntable, String numJoueur) throws RemoteException;
+	void stand(String numTable, String numJoueur) throws RemoteException;
 	
 	/**
 	 * Donne le nombre de joueurs
 	 * @return le nombre de joueur : type entier
 	 * @throws RemoteException
 	 */
-	int listJoueur(String ntable) throws RemoteException; 
+	int listJoueur(String numTable) throws RemoteException; 
 	
 	/**
 	 * Donne le score final au joueur
@@ -98,7 +102,7 @@ public interface CasinoServeur extends java.rmi.Remote {
 	 * @return donne le résulat de la manche
 	 * @throws RemoteException
 	 */
-	int score(String ntable, String numJoueur) throws RemoteException;
+	int score(String numTable, String numJoueur) throws RemoteException;
 	
 	/**
 	 * Liste les tables pour le joueur 
@@ -107,4 +111,32 @@ public interface CasinoServeur extends java.rmi.Remote {
 	 * @throws RemoteException
 	 */
 	void listTables(String numJoueur) throws RemoteException;
+	
+	/**
+	 * Affiche le solde disponible en jeton sur le compte du joueur
+	 * @param numJoueur
+	 * 		le numero du joueur
+	 * @throws RemoteException
+	 */
+	int consulterSolde(String numJoueur) throws RemoteException;
+	
+	/**
+	 * Le joueur mise un montant en jetons
+	 * @param numJoueur
+	 * 		le numero du joueur
+	 * @param mise
+	 * 		le nombre de jetons mises
+	 * @throws RemoteException
+	 */
+	void miser(String numTable, String numJoueur, int mise) throws RemoteException;
+	
+	/**
+	 * Ajoute une somme en jetons sur le compte du joueur
+	 * @param numJoueur
+	 * 		le numero du joueur
+	 * @param mise
+	 * 		le nombre de jetons ajoutes au compte 
+	 * @throws RemoteException
+	 */
+	void crediter(String numJoueur, int mise) throws RemoteException;
 }
