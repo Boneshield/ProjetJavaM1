@@ -22,14 +22,7 @@ public class Table {
 	public Table(String numTable, int taille) {
 		this.partie = new BlackJack();
 		this.numTable = numTable;
-		if(taille < 1 || taille > 6) {
-			System.out.println("La taille doit être comprise entre 1 et 6");
-			System.out.println("Taille mise à 6 par défaut");
-			this.taille = 6;
-		}
-		else {
-			this.taille = taille;
-		}
+		this.taille = taille;
 	}
 	
 	/**

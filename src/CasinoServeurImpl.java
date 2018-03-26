@@ -65,10 +65,15 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 * 			code de retour pour savoir si la connexion s'est bien passee
 	 */
 	public int connexionTable(String numTable, String numJoueur, Client srv) throws RemoteException {
+		//Si la table n'existe pas
+		if(!this.cn.isTable(numTable)) {
+			return 2;
+		}
+		//Si la table est complète
 		if(this.cn.listTables.get(numTable).getNbJoueurCo() >= this.cn.listTables.get(numTable).getTaille()) {
 			this.cn.salleAttente.get(numJoueur).srv.afficherTexte("Cette table est complète");
 			System.out.println("Listing des tables pour "+numJoueur);
-			return 4;
+			return 1;
 		}
 		else {
 			System.out.println("Connexion du joueur : "+numJoueur+" a la table "+numTable);

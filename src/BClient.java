@@ -2,7 +2,9 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  * Main du client
@@ -20,45 +22,71 @@ public class BClient {
 	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 		try {
+			//Lookup au serveur RMI
 			CasinoServeur cl = (CasinoServeur) Naming.lookup("rmi://localhost/BlackJack");
-			String numJoueur = null, numTable = null;
-			int choix = 0, taille = 0;
-			boolean stand = false, statut = false, carteEnMain = false;
-						
+			
+			String numJoueur = null;		//Numéro du joueur (son nom)
+			String numTable = null;			//Numéro de la table (son nom)
+			int choix = 0;					//Indicateur du choix du client
+			int taille = 0;					//taille de la table si le joueur crée une table
+			boolean stand = false;			//Indicateur si le joueur est stand ou non
+			boolean statut = false;			//Indicateur si le joueur quitte la table ou non
+			boolean carteEnMain = false;	//Indicateur si le joueur a des cartes dans sa main
+			Scanner lecture;				//Lecteur des saisies du joueur
+			
 			//Création interface client pour le serveur
 			ClientImpl srv = new ClientImpl();
-			System.out.println("BlackJack version client 3");
+			System.out.println("BlackJack version client 4");
 			
-			System.out.println("Veuillez entrer un nom de joueur :");
-			//lecture du nom/pseudo/numéro du client
-			Scanner lecture;
 			lecture = new Scanner(System.in);
-			numJoueur = lecture.next();
+			do {
+				//lecture du nom/pseudo/numéro du client
+				System.out.println("Veuillez entrer un nom de joueur :");
+				numJoueur = lecture.next();
+			}while(!Pattern.matches("[0-9a-zA-Z]*", numJoueur));
 			
-			//Retour ici après avoir quitté une table
+			//Boucle de client du casino
 			while(true) {
-				//Connexion du joueur a la salle d'attente et affichage des tables
+				//Retour ici après avoir quitté une table
+				
+				//Connexion du joueur a la salle d'attente du casino et affichage des tables
 				System.out.println("Affichage de la liste des tables");
 				cl.connexion(numJoueur, srv);
 				
-				System.out.println("choisir une table(1) ou bien en créer une(2) ?");
+				System.out.println("choisir une table(1), en créer une(2) ou afficher la liste des tables(3)?");
 				
 				do{
-					System.out.println("Entrer 1, 2 ou 3(Afficher la liste des tables):");
-					choix = lecture.nextInt();
+					System.out.println("Entrer 1, 2 ou 3:");
+					try {
+						choix = lecture.nextInt();
+					}catch (InputMismatchException e){
+						choix = 3;
+						lecture.nextLine();
+					}
 					//choix d'une table
 					if(choix == 1) {
-						System.out.println("Veuillez choisir une table : ");
-						//lecture du choix de table du client
-						numTable = lecture.next();
+						do {
+							System.out.println("Veuillez choisir une table : ");
+							//lecture du choix de table du client
+							numTable = lecture.next();
+						}while(!Pattern.matches("[0-9a-zA-Z]*", numTable));
+						
 						choix = cl.connexionTable(numTable,numJoueur, srv);
 					}
 					//Creation d'une table
 					if(choix == 2) {
 						System.out.println("Creation table");
 						numTable = numJoueur;
-						System.out.println("Veuillez entrer la taille de la table :");
-						taille = lecture.nextInt();
+						do {
+							System.out.println("Veuillez entrer la taille de la table :");
+							try {
+								taille = lecture.nextInt();
+							} catch (InputMismatchException e) {
+								System.out.println("Taille incorrecte");
+								lecture.nextLine();
+							}
+						}while(taille >= 1 && taille <= 6);
+						
 						cl.creerTable(taille, numTable);
 						System.out.println("Table créée");
 						choix = cl.connexionTable(numTable,numJoueur, srv);

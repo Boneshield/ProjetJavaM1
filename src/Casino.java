@@ -82,4 +82,18 @@ public class Casino {
 			}
 		}
 	}
+	
+	/**
+	 * Retourne vrai si la table existe et faux sinon
+	 * @param numTable
+	 * @return
+	 */
+	public boolean isTable(String numTable) {
+		for(Table table : this.listTables.values()) {
+			if(table.getNum() == numTable) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
