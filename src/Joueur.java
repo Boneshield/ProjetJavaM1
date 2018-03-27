@@ -9,6 +9,8 @@
 public class Joueur extends Personne{
 	
 	private String numJoueur;
+	private boolean etatMise;
+	private int miseActuelle;
 	protected Client srv;
 	
 	/**
@@ -21,6 +23,8 @@ public class Joueur extends Personne{
 	public Joueur(String numJoueur, Client srv) {
 		super();
 		this.numJoueur = numJoueur;
+		this.etatMise = false;
+		this.miseActuelle = 0;
 		this.srv = srv;
 	}
 	
@@ -40,4 +44,38 @@ public class Joueur extends Personne{
 	public void hit(JeuDeCarte jeu) {
 		super.hit(jeu);
 	}
+	
+	/**
+	 * Retourne vrai si le joueur a deja misé au moins une fois et faux sinon
+	 * @return
+	 */
+	public boolean getEtatMise() {
+		return this.etatMise;
+	}
+	
+	/**
+	 * Change l etat du joueur si il a mise ou non
+	 * @param etatMise
+	 */
+	public void setEtatMise(boolean etatMise) {
+		this.etatMise = etatMise;
+	}
+	
+	/**
+	 * Retourne la mise actuelle du joueur
+	 * @return
+	 */
+	public int getMiseActuelle() {
+		return this.miseActuelle;
+	}
+	
+	/**
+	 * Change la mise actuelle en la mise passée en paramètre
+	 * @param mise
+	 */
+	public void setMiseActuelle(int mise) {
+		this.miseActuelle = mise;
+	}
+	
+	
 }

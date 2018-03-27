@@ -29,11 +29,13 @@ public class BClient {
 			String numTable = null;			//Numéro de la table (son nom)
 			int choix = 0;					//Indicateur du choix du client
 			int taille = 0;					//Taille de la table si le joueur crée une table
+			int miseJoueur;					//Mise entrée par le client
 			int miseMinimale = 0;			//Mise minimale de la table créée par le joueur
 			int miseMaximale = 0;			//Mise maximale de la table créée par le joueur
 			boolean stand = false;			//Indicateur si le joueur est stand ou non
 			boolean statut = false;			//Indicateur si le joueur quitte la table ou non
 			boolean carteEnMain = false;	//Indicateur si le joueur a des cartes dans sa main
+			boolean miseFaite = false;		//Indicateur si le joueur a misé 
 			Scanner lecture;				//Lecteur des saisies du joueur
 			
 			//Création de l'interface client pour le serveur
@@ -57,7 +59,7 @@ public class BClient {
 				cl.connexion(numJoueur, srv);
 				
 				System.out.println("choisir une table(1), en créer une(2) ou afficher la liste des tables(3)?");
-				
+				System.out.println("Votre solde est de : "+cl.consulterSolde(numJoueur));
 				do{
 					System.out.println("Entrer 1, 2 ou 3:");
 					try {
@@ -156,7 +158,7 @@ public class BClient {
 							break;
 						default:
 							//Erreur
-							System.out.println("Ce choix n'est pas possible");
+							System.out.println("Ce choix n'est pas possible !");
 							choix = 3;
 							break;
 					}
@@ -170,6 +172,9 @@ public class BClient {
 					try {
 						if(cl.returnTailleMain(numTable, numJoueur) != 0 || cl.listJoueur(numTable) == 0) {
 							carteEnMain = true;
+							miseFaite = false;
+							miseMinimale = cl.getMiseMiniTable(numTable, numJoueur);
+							miseMaximale = cl.getMiseMaxiTable(numTable, numJoueur);
 							break;
 						}
 					}
@@ -181,21 +186,50 @@ public class BClient {
 				//Boucle de partie
 				while(carteEnMain){
 					//Stand permet de savoir si on affiche le menu ou si on est en fin de partie
-					if(!stand) {
+					if(!stand) {						
 						System.out.println("******* MENU *******");
 						System.out.println("Table : "+numTable);
 						System.out.println("Il y a "+cl.listJoueur(numTable)+" joueurs");
 						System.out.println(" ");
 						System.out.println("Vous etes le joueur "+numJoueur);
+						System.out.println("Votre solde de jetons : "+cl.consulterSolde(numJoueur));
+						System.out.println("Mise min-max : "+miseMinimale+"-"+miseMaximale);
 						System.out.println("Voici votre main");
 						cl.afficherMain(numTable,numJoueur);
 						System.out.println("Affichage du score :");
 						System.out.println(cl.score(numTable,numJoueur));
 						System.out.println(" ");
+						
+						//Si le solde du joueur n'est pas suffisant pour miser, il quitte la table
+						if(cl.consulterSolde(numJoueur) < miseMinimale) {
+							cl.quitterTable(numTable, numJoueur);
+							carteEnMain = false;
+							break;
+						}
+						//Si c'est le premier tour, on fait la mise initiale
+						while(!miseFaite) {
+								System.out.println("Veuillez entrer votre mise :");
+								try {
+									miseJoueur = lecture.nextInt();
+									if(miseJoueur >= miseMinimale && miseJoueur <= miseMaximale) {
+										System.out.println("Vous avez misé : "+miseJoueur);
+										cl.miser(numTable, numJoueur, miseJoueur);
+										miseFaite = true;
+									}
+									if(!miseFaite) {
+										System.out.println("Erreur de saisie !");
+										lecture.nextLine();
+									}
+								} catch (InputMismatchException e) {
+									System.out.println("Mise incorrecte !");
+								}	
+							}
+						
 						System.out.println("Que voulez vous faire ?");
 						System.out.println("1.Hit (Tirer une carte)");
-						System.out.println("2.Stand (Arreter de miser)");
-						System.out.println("3.Quitter la table");
+						System.out.println("2.Stand (Arreter de jouer)");
+						System.out.println("3.Enchérir sur la mise ");
+						System.out.println("4.Quitter la table");
 						System.out.println("choix : ");
 						
 						//lecture du choix du client
@@ -211,7 +245,6 @@ public class BClient {
 								System.out.println("Affichage du score :");
 								System.out.println(cl.score(numTable,numJoueur));
 								if(cl.score(numTable,numJoueur) > 21) {
-									System.out.println("Vous avez été éliminé");
 									cl.hit(numTable,numJoueur);
 									System.out.println("Vous quittez la table"+numTable);
 									cl.quitterTable(numTable, numJoueur);
@@ -229,6 +262,28 @@ public class BClient {
 								}
 								break;
 							case 3:
+								System.out.println("Vous décidez d'enchérir sur votre mise");
+								System.out.println("Veuillez entrer le montant de jetons à rajouter :");
+								miseFaite = false;
+								while(!miseFaite) {
+									System.out.println("Veuillez entrer votre mise :");
+									try {
+										miseJoueur = lecture.nextInt();
+										if(miseJoueur > miseMinimale && miseJoueur < miseMaximale) {
+											System.out.println("Vous avez misé : "+miseJoueur);
+											cl.miser(numTable, numJoueur, miseJoueur);
+											miseFaite = true;
+										}
+										if(!miseFaite) {
+											System.out.println("Erreur de saisie !");
+											lecture.nextLine();
+										}
+									} catch (InputMismatchException e) {
+										System.out.println("Mise incorrecte !");
+									}	
+								}
+								break;
+							case 4:
 								System.out.println("Vous quittez la table"+numTable);
 								cl.quitterTable(numTable, numJoueur);
 								//retour en salle d'attente
@@ -236,7 +291,7 @@ public class BClient {
 								carteEnMain = false;
 								break;
 							default:
-								System.out.println("Le choix doit être 1, 2, ou 3");
+								System.out.println("Le choix doit être 1, 2, 3 ou 4");
 						}
 					}
 					else {
@@ -248,6 +303,7 @@ public class BClient {
 						if(choix == 1) {
 							//recommencer partie
 							stand = false;
+							miseFaite = false;
 							//attente que la partie recommence
 							new CountDown(10);
 						}
@@ -265,6 +321,7 @@ public class BClient {
 				}
 				stand = false;
 				statut = false;
+				miseFaite = false;
 			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();

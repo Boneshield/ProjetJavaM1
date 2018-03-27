@@ -92,6 +92,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 		else {
 			System.out.println("Connexion du joueur : "+numJoueur+" a la table "+numTable);
 			this.cn.listTables.get(numTable).joinTable(numJoueur, srv);
+			
 			//On retire le joueur de la salle d'attente
 			this.cn.salleAttente.remove(numJoueur);
 			return 0;
@@ -211,6 +212,7 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 */
 	public void miser(String numTable, String numJoueur, int mise) throws RemoteException {
 		this.cn.gestionMises.miser(numJoueur, mise);
+		this.cn.listTables.get(numTable).partie.miser(numJoueur, mise);
 	}
 
 	/**
@@ -225,6 +227,30 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 		this.cn.gestionMises.ajoutCredit(numJoueur, mise);
 	}
 
-	
+	/**
+	 * Retourne la mise minimale de la table actuelle du joueur
+	 * @param numTable
+	 * 			le numero de la table
+	 * @param numJoueur
+	 * 			le numero du joueur
+	 * @return
+	 * @throws RemoteException
+	 */
+	public int getMiseMiniTable(String numTable, String numJoueur) throws RemoteException {
+		return this.cn.listTables.get(numTable).getMiseMinimale();
+	}
+
+	/**
+	 * Retourne la mise maximale de la table actuelle du joueur
+	 * @param numTable
+	 * 			le numero de la table
+	 * @param numJoueur
+	 * 			le numero du joueur
+	 * @return
+	 * @throws RemoteException
+	 */
+	public int getMiseMaxiTable(String numTable, String numJoueur) throws RemoteException {
+		return this.cn.listTables.get(numTable).getMiseMaximale();
+	}
 	
 }

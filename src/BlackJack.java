@@ -14,19 +14,21 @@ public class BlackJack {
 	protected LinkedList<Joueur> enAttente; 
 	private Croupier croupier;
 	private boolean enCours;
+	private Table table;
 	
 	/**
 	 * Constructeur
 	 * Cree la liste des joueurs, un croupier ainsi qu'un jeu de carte
 	 * @see Joueur, JeuDeCarte
 	 */
-	public BlackJack() {
+	public BlackJack(Table table) {
 		lesJoueurs = new HashMap<String, Joueur>();
 		enAttente = new LinkedList<Joueur>();
 		Croupier croupier = new Croupier();
 		this.croupier = croupier;
 		this.jeu = new JeuDeCarte();
 		this.enCours = false;
+		this.table = table;
 	}
 	
 	/**
@@ -59,8 +61,8 @@ public class BlackJack {
 				this.enCours = true;
 				System.out.println("La partie commence !");
 				this.informJoueurs("La partie commence !");
-				this.informJoueurs("C'est l'heure des mises !");
-				this.distribuer();
+				this.distribuerJoueur();
+				this.distribuerCroupier();
 			}
 			else {
 				//Ajout du joueur à la partie
@@ -74,7 +76,7 @@ public class BlackJack {
 	 * Distribution cartes par le croupier deux par personne
 	 * 
 	 */
-	public void distribuer() {
+	public void distribuerJoueur() {
 		//tant que un joueur n'a pas deux cartes, lui donner une carte
 		System.out.println("tirage des joueurs");
 		for(Joueur joueur : this.lesJoueurs.values()) {
@@ -83,7 +85,14 @@ public class BlackJack {
 				this.lesJoueurs.get(joueur.getNumJoueur()).hit(jeu);
 			} while(this.lesJoueurs.get(joueur.getNumJoueur()).getMain().size() != 2);
 		}
+	}
+	
+	/**
+	 * Le croupier pioche ses cartes
+	 */
+	public void distribuerCroupier() {
 		System.out.println("tirage du croupier");
+		this.informJoueurs("Le croupier pioche");
 		//Tirage du croupier
 		this.croupier.hit(jeu);
 		this.informJoueurs("Le croupier a pioché :"+this.croupier.afficheMain());
@@ -170,12 +179,16 @@ public class BlackJack {
 			//Quatre cas de figure
 				for(Joueur joueur : this.lesJoueurs.values()) {
 					int scoreJoueur = this.lesJoueurs.get(joueur.getNumJoueur()).calculScore();
+					int mise = this.lesJoueurs.get(joueur.getNumJoueur()).getMiseActuelle();
+					int miseGagnee = mise*2;
 					//croupier perdant
 					if(this.croupier.calculScore() > 21) {
 						//Tout les joueurs gagnent
 						System.out.println("Tout les joueurs gagnent");
+						this.table.gestionMises.ajoutCredit(joueur.getNumJoueur(), miseGagnee);
 						try {
 							joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier");
+							joueur.srv.afficherTexte("Vous remportez 2 fois votre mise : "+miseGagnee);
 						} catch (RemoteException e) {
 							e.printStackTrace();
 						}
@@ -184,8 +197,10 @@ public class BlackJack {
 					if(this.croupier.calculScore() < scoreJoueur) {
 						//Joueur gagnant
 						System.out.println("Le joueur "+joueur.getNumJoueur()+" a gagne");
+						this.table.gestionMises.ajoutCredit(joueur.getNumJoueur(), miseGagnee);
 						try {
 							joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier");
+							joueur.srv.afficherTexte("Vous remportez 2 fois votre mise : "+miseGagnee);
 						} catch (RemoteException e) {
 							e.printStackTrace();
 						}
@@ -209,8 +224,10 @@ public class BlackJack {
 							if(this.croupier.getMain().size() == 3 && this.lesJoueurs.get(joueur.getNumJoueur()).getMain().size() == 2) {
 								//Joueur gagnant
 								System.out.println("Le joueur "+joueur.getNumJoueur()+" a gagne avec un blackjack");
+								this.table.gestionMises.ajoutCredit(joueur.getNumJoueur(), miseGagnee);
 								try {
 									joueur.srv.afficherScore("Vous avez gagné avec un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier, BlackJack pour vous");
+									joueur.srv.afficherTexte("Vous remportez 2 fois votre mise : "+miseGagnee);
 								} catch (RemoteException e) {
 									e.printStackTrace();
 								}
@@ -228,8 +245,10 @@ public class BlackJack {
 							else {
 								//Sinon egalite parfaite
 								System.out.println("Egalite");
+								this.table.gestionMises.ajoutCredit(joueur.getNumJoueur(), mise);
 								try {
 									joueur.srv.afficherScore("Vous avez un score de "+scoreJoueur+" contre "+this.croupier.calculScore()+" pour le croupier, Egalite parfaite");
+									joueur.srv.afficherTexte("Vous reprennez votre mise : "+mise);
 								} catch (RemoteException e) {
 									e.printStackTrace();
 								}
@@ -238,6 +257,7 @@ public class BlackJack {
 					}
 				}
 			}
+		System.out.println("Fin de partie");
 	}
 
 	/**
@@ -249,8 +269,10 @@ public class BlackJack {
 		for(Joueur joueur : this.lesJoueurs.values()) {
 			//Vider les mains de tout les joueurs
 			joueur.viderMain();
-			//Repasser le stand des joueurs à false
+			//Repasser le stand et l'etat de la mise des joueurs à false
 			joueur.setStand(false);
+			joueur.setEtatMise(false);
+			joueur.setMiseActuelle(0);
 		}
 		//Réinitialiser le croupier
 			//Vider sa main
@@ -272,7 +294,9 @@ public class BlackJack {
 		new CountDown(10);
 		this.enCours = true;
 		System.out.println("La partie commence");
-		this.distribuer();
+		this.distribuerJoueur();
+		this.distribuerCroupier();
+		this.verifMiseInitiale();
 	}
 	
 	
@@ -287,6 +311,8 @@ public class BlackJack {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+		//On verifie les jetons du joueur a ce moment là
+		this.verifMiseInitiale();
 	}
 
 	/**
@@ -346,6 +372,59 @@ public class BlackJack {
 		}
 		else {
 			return false;
+		}
+	}
+	
+	/**
+	 * Fait miser le joueur une mise en jetons
+	 * @param numJoueur
+	 * 			le numero du joueur
+	 * @param mise
+	 * 			la mise du joueur en jetons
+	 */
+	public void miser(String numJoueur, int mise) {
+		//Le joueur surenchérit
+		if(this.lesJoueurs.get(numJoueur).getEtatMise()) {
+			this.informJoueurs("Le joueur "+numJoueur+" surenchérit de "+mise);
+			System.out.println("Le joueur "+numJoueur+" surenchérit de "+mise);
+			mise = mise+this.lesJoueurs.get(numJoueur).getMiseActuelle();
+			this.lesJoueurs.get(numJoueur).setMiseActuelle(mise);
+			
+		}
+		else {
+			//Si le joueur mise pour la première fois
+			this.lesJoueurs.get(numJoueur).setEtatMise(true);
+			this.lesJoueurs.get(numJoueur).setMiseActuelle(mise);
+			this.informJoueurs("Le joueur "+numJoueur+" mise "+mise+" jetons");
+			System.out.println("Le joueur "+numJoueur+" mise "+mise+" jetons");
+		}
+	}
+	
+	/**
+	 * Retourne vrai si tous les joueurs ont au moins misé une fois
+	 * @return
+	 */
+	public boolean miseUneFois() {
+		for(Joueur joueur : this.lesJoueurs.values()) {
+			if(!joueur.getEtatMise()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Fait quitter la partie aux joueurs qui n'ont pas assez de jetons pour jouer
+	 */
+	public void verifMiseInitiale() {
+		//Pour chaque joueur
+		for(Joueur joueur : this.lesJoueurs.values()) {
+			int solde = this.table.gestionMises.getSolde(joueur.getNumJoueur());
+			//Si solde insuffisant
+			if(solde < this.table.getMiseMinimale()) {
+				//Quitter table
+				this.lesJoueurs.remove(joueur.getNumJoueur());
+			}
 		}
 	}
 }

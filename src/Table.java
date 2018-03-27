@@ -17,6 +17,7 @@ public class Table {
 	private int miseMinimale;
 	private int miseMaximale;
 	private Croupier croupier;
+	protected ServiceDeMises gestionMises;
 	
 	/**
 	 * Constructeur
@@ -24,12 +25,13 @@ public class Table {
 	 * @param taille
 	 * 		Entier definissant le nombre de joueur a la table
 	 */
-	public Table(String numTable, int taille, int miseMinimale, int miseMaximale) {
-		this.partie = new BlackJack();
+	public Table(String numTable, int taille, int miseMinimale, int miseMaximale, ServiceDeMises gestionMises) {
 		this.numTable = numTable;
 		this.taille = taille;
 		this.miseMinimale = miseMinimale;
 		this.miseMaximale = miseMaximale;
+		this.gestionMises = gestionMises;
+		this.partie = new BlackJack(this);
 	}
 	
 	/**
@@ -111,7 +113,7 @@ public class Table {
 		//Si la table est vide alors on stoppe la partie
 		if(this.partie.lesJoueurs.isEmpty() && this.partie.enAttente.isEmpty()) {
 			System.out.println("Table vide arrêt de la partie");
-			this.partie = new BlackJack();
+			this.partie = new BlackJack(this);
 		}
 	}
 	

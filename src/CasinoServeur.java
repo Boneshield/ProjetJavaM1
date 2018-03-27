@@ -139,4 +139,26 @@ public interface CasinoServeur extends java.rmi.Remote {
 	 * @throws RemoteException
 	 */
 	void crediter(String numJoueur, int mise) throws RemoteException;
+	
+	/**
+	 * Retourne la mise minimale de la table actuelle du joueur
+	 * @param numTable
+	 * 			le numero de la table
+	 * @param numJoueur
+	 * 			le numero du joueur
+	 * @return
+	 * @throws RemoteException
+	 */
+	int getMiseMiniTable(String numTable, String numJoueur) throws RemoteException;
+	
+	/**
+	 * Retourne la mise maximale de la table actuelle du joueur
+	 * @param numTable
+	 * 			le numero de la table
+	 * @param numJoueur
+	 * 			le numero du joueur
+	 * @return
+	 * @throws RemoteException
+	 */
+	int getMiseMaxiTable(String numTable, String numJoueur) throws RemoteException;
 }

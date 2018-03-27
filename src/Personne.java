@@ -32,7 +32,7 @@ public abstract class Personne {
 	public String afficheMain() {
 		String main = "Main :\n";
 		for(int i=0;i<this.main.size();i++) {
-			main = (main+" "+i+" "+this.main.get(i).ToString()+"\n");
+			main = (main+" "+this.main.get(i).ToString()+"\n");
 		}
 		return main;
 	}

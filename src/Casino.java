@@ -13,14 +13,14 @@ public class Casino {
 
 	protected HashMap<String, Table> listTables;
 	protected HashMap<String, Joueur> salleAttente; 
-	ServiceDeMises gestionMises;
+	protected ServiceDeMises gestionMises;
 	/**
 	 * Constructeur
 	 */
 	public Casino() {
 		this.listTables = new HashMap<String, Table>();
 		this.salleAttente = new HashMap<String, Joueur>();
-		this.gestionMises = new ServiceDeMises();
+		gestionMises = new ServiceDeMises();
 	}
 
 	/**
@@ -32,7 +32,7 @@ public class Casino {
 	 * @return Table nouvelle table
 	 */
 	public void creerTable(String numTable, int taille, int miseMinimale, int miseMaximale)	{
-		Table table = new Table(numTable, taille, miseMinimale, miseMaximale);
+		Table table = new Table(numTable, taille, miseMinimale, miseMaximale, this.gestionMises);
 		this.listTables.put(numTable,table);
 		Croupier croupier = this.creerCroupier();
 		this.listTables.get(numTable).setCroupier(croupier);	
