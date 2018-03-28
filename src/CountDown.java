@@ -7,13 +7,10 @@ public class CountDown {
 	
 	//on attends un temps de t secondes 
 	public CountDown(int t) {
-		do {
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(1000*t);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			t = t - 1;
-		}while(t != 0);
 	}
 }

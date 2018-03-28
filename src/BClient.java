@@ -196,16 +196,16 @@ public class BClient {
 						System.out.println("Mise min-max : "+miseMinimale+"-"+miseMaximale);
 						System.out.println("Voici votre main");
 						cl.afficherMain(numTable,numJoueur);
-						System.out.println("Affichage du score :");
-						System.out.println(cl.score(numTable,numJoueur));
-						System.out.println(" ");
-						
 						//Si le solde du joueur n'est pas suffisant pour miser, il quitte la table
 						if(cl.consulterSolde(numJoueur) < miseMinimale) {
 							cl.quitterTable(numTable, numJoueur);
 							carteEnMain = false;
 							break;
 						}
+						System.out.println("Affichage du score :");
+						System.out.println(cl.score(numTable,numJoueur));
+						System.out.println(" ");
+						
 						//Si c'est le premier tour, on fait la mise initiale
 						while(!miseFaite) {
 								System.out.println("Veuillez entrer votre mise :");

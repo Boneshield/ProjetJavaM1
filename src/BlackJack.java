@@ -128,7 +128,7 @@ public class BlackJack {
 			}
 			this.informJoueurs("Le joueur "+numJoueur+" a ete elimine");
 			System.out.println("Joueur "+numJoueur+" a ete elimine");
-			this.lesJoueurs.remove(numJoueur);
+			this.table.quitTable(numJoueur);
 			//Si c'est le seul joueur en jeu alors la partie recommence avec les joueurs en attente
 			if(this.lesJoueurs.isEmpty()) {
 				this.recommencerPartie();
@@ -389,7 +389,7 @@ public class BlackJack {
 			System.out.println("Le joueur "+numJoueur+" surenchérit de "+mise);
 			mise = mise+this.lesJoueurs.get(numJoueur).getMiseActuelle();
 			this.lesJoueurs.get(numJoueur).setMiseActuelle(mise);
-			
+			System.out.println("Le joueur a donc mise "+mise);
 		}
 		else {
 			//Si le joueur mise pour la première fois
@@ -421,7 +421,7 @@ public class BlackJack {
 		for(Joueur joueur : this.lesJoueurs.values()) {
 			int solde = this.table.gestionMises.getSolde(joueur.getNumJoueur());
 			//Si solde insuffisant
-			if(solde < this.table.getMiseMinimale()) {
+			if(solde <= this.table.getMiseMinimale()) {
 				//Quitter table
 				this.lesJoueurs.remove(joueur.getNumJoueur());
 			}

@@ -107,8 +107,10 @@ public class CasinoServeurImpl extends UnicastRemoteObject implements CasinoServ
 	 */
 	public void quitterTable(String numTable, String numJoueur) throws RemoteException {
 		this.cn.listTables.get(numTable).quitTable(numJoueur);
+		//Si le joueur a créé la table
 		if(numTable.equals(numJoueur)) {
 			System.out.println("La table "+numTable+" a ete supprimee");
+			new CountDown(20);
 			this.cn.supprimerTable(numTable);
 		}
 	}
